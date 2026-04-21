@@ -158,15 +158,16 @@ All requests and responses are JSON unless the request uses `multipart/form-data
 type ImageInput =
   | { url: string }
   | { base64: string; mime: "image/png" | "image/jpeg" | "image/webp" | "image/gif" }
-  // OR multipart/form-data with an `image` file field
 
 type ProviderOptions = {
   provider?: string
   model?: string
-  fallback?: string[]
-  retries?: number
+  fallback?: string[]   // if set, replaces env FALLBACK_CHAIN for this request
+  retries?: number      // if set, overrides env RETRY_ATTEMPTS for this request
 }
 ```
+
+Multipart uploads are an alternate request encoding, not a third `ImageInput` variant. When `Content-Type: multipart/form-data`, the service reads an `image` file field and any remaining JSON fields from a sibling `payload` field; the `image` in the parsed body is then treated as the `{ bytes, mime }` internal form directly.
 
 ### `POST /v1/describe`
 
@@ -203,7 +204,7 @@ Request, one of:
 - `{ image: ImageInput, schema: JsonSchema } & ProviderOptions` — ad-hoc schema
 - `{ image: ImageInput, templateId: string } & ProviderOptions` — server-registered template
 
-Response:
+Response (template path):
 ```json
 {
   "data": { },
@@ -213,7 +214,17 @@ Response:
   "usage": {}
 }
 ```
-`templateId` is `null` when an ad-hoc `schema` is used.
+
+Response (ad-hoc schema path):
+```json
+{
+  "data": { },
+  "templateId": null,
+  "provider": "...",
+  "model": "...",
+  "usage": {}
+}
+```
 
 ### `POST /v1/analyze`
 
@@ -247,7 +258,7 @@ Response (HTTP 202):
 
 Server-Sent Events. Sends current state immediately on connect, then one event per state transition.
 
-Event types: `status`, `progress`, `completed`, `failed`. The stream closes on a terminal event or client disconnect. Heartbeat comments every `SSE_HEARTBEAT_MS`.
+Event types (MVP): `status`, `completed`, `failed`. A `progress` event type is reserved for phase 2 once we have a provider capable of emitting intermediate progress. The stream closes on a terminal event or client disconnect. Heartbeat comments every `SSE_HEARTBEAT_MS`.
 
 ### `GET /v1/templates`
 
@@ -296,10 +307,13 @@ All non-2xx responses use:
    - multipart: stream the `image` field, cap at `MAX_IMAGE_BYTES`.
 5. `tasks/<task>.ts` builds a provider-agnostic call (prompt + optional Zod/JsonSchema).
 6. `ProviderRouter.call(opts)`:
-   - resolve provider (request override → `DEFAULT_PROVIDER`)
-   - attempt; on failure, retry up to `RETRY_ATTEMPTS` with exponential backoff
-   - on exhaustion, try next provider in `fallback`/`FALLBACK_CHAIN`
-   - return `{ output, usage, provider, model }`
+   - resolve provider (request `provider` → `DEFAULT_PROVIDER`)
+   - resolve retry count (request `retries` → `RETRY_ATTEMPTS`) and fallback chain (request `fallback` → `FALLBACK_CHAIN`). Request-level values **replace** env-level values; they do not extend them.
+   - attempt primary; on failure, retry up to the resolved retry count with exponential backoff.
+   - on retry exhaustion, try each provider in the resolved fallback chain in order, each with its own retry budget.
+   - return `{ output, usage, provider, model }` on the first success, or throw `ProviderFailedError` with `details.attempts` populated after the last chain member fails.
+
+Total attempt budget for a sync request is `(1 + retries) × (1 + fallback.length)` provider invocations in the worst case. `JOB_MAX_ATTEMPTS` is a separate, outer worker-level retry around this whole budget for async jobs.
 7. Handler shapes the response.
 8. Error middleware catches `RetinaError` subclasses and emits the error envelope.
 
