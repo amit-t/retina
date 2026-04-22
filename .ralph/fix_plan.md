@@ -9,18 +9,6 @@ working state (lint + typecheck + existing tests green).
 
 ## High Priority
 
-- [ ] **R01** Scaffold pnpm + strict TypeScript + Biome + Vitest + tsconfig
-  - [x] Create `package.json` declaring `packageManager: pnpm`, Node >=20 engines, scripts `dev` (tsx watch), `build` (tsc emit to `dist`), `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), `format` (`biome format --write .`), `test`, `test:unit`, `test:replay`, `test:e2e`, `test:live`
-  - [x] Declare runtime deps: `hono`, `@hono/node-server`, `zod`, `pino`, `ai`, `@ai-sdk/openai`, `@ai-sdk/amazon-bedrock`, `@ai-sdk/anthropic`, `@ai-sdk/google`, `ioredis`, `undici`
-  - [ ] Declare dev deps: `typescript`, `@types/node`, `tsx`, `vitest`, `@vitest/coverage-v8`, `@biomejs/biome`, `ioredis-mock`, `@testcontainers/redis`
-  - [x] Create `tsconfig.json` with `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `target: ES2022`, `module: ESNext`, `moduleResolution: bundler`, `outDir: dist`, `rootDir: src`
-  - [ ] Create `biome.json` (2-space indent, single quotes, trailing commas `all`, `organizeImports` on, lint recommended + TS rules)
-  - [ ] Create `vitest.config.ts` with 4 project layers (unit/replay/e2e/live) each scoped by `test/<layer>/**`, coverage provider `v8`, threshold 80% on `src/**` excluding `src/index.ts`
-  - [ ] Update `.gitignore` to ignore `node_modules/`, `dist/`, `coverage/`, `.vitest-cache/`
-  - [ ] Stub `src/index.ts` with `process.exit(0)` placeholder
-  - [ ] Acceptance: `pnpm install` succeeds, `pnpm typecheck` passes, `pnpm biome ci` passes, `pnpm test` runs (0 tests OK)
-  - [ ] Depends on: —
-
 - [ ] **R02** Hono app skeleton + RetinaError hierarchy + core middleware + /healthz stub + logger
   - [ ] Create `src/core/errors.ts` with `RetinaError` base (`code`, `status`, `cause`, `details`) plus all 10 subclasses from spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`)
   - [ ] Create `src/logger.ts` exporting a pino JSON logger writing to stdout, level from parameter (wired to config in R13)
@@ -274,6 +262,17 @@ until the user explicitly promotes them.
 ## Completed
 
 - [x] Project enabled for Ralph
+- [x] **R01** Scaffold pnpm + strict TypeScript + Biome + Vitest + tsconfig
+  - [x] Create `package.json` declaring `packageManager: pnpm`, Node >=20 engines, scripts `dev` (tsx watch), `build` (tsc emit to `dist`), `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), `format` (`biome format --write .`), `test`, `test:unit`, `test:replay`, `test:e2e`, `test:live`
+  - [x] Declare runtime deps: `hono`, `@hono/node-server`, `zod`, `pino`, `ai`, `@ai-sdk/openai`, `@ai-sdk/amazon-bedrock`, `@ai-sdk/anthropic`, `@ai-sdk/google`, `ioredis`, `undici`
+  - [x] Declare dev deps: `typescript`, `@types/node`, `tsx`, `vitest`, `@vitest/coverage-v8`, `@biomejs/biome`, `ioredis-mock`, `@testcontainers/redis`
+  - [x] Create `tsconfig.json` with `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `target: ES2022`, `module: ESNext`, `moduleResolution: bundler`, `outDir: dist`, `rootDir: src`
+  - [x] Create `biome.json` (2-space indent, single quotes, trailing commas `all`, `organizeImports` on, lint recommended + TS rules)
+  - [x] Create `vitest.config.ts` with 4 project layers (unit/replay/e2e/live) each scoped by `test/<layer>/**`, coverage provider `v8`, threshold 80% on `src/**` excluding `src/index.ts`
+  - [x] Update `.gitignore` to ignore `node_modules/`, `dist/`, `coverage/`, `.vitest-cache/`
+  - [x] Stub `src/index.ts` with `process.exit(0)` placeholder
+  - [x] Acceptance: `pnpm install` succeeds, `pnpm typecheck` passes, `pnpm biome ci` passes, `pnpm test` runs (0 tests OK)
+  - [x] Depends on: —
 
 ## Notes
 

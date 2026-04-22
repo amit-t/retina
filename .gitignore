@@ -5,10 +5,16 @@
 !.ralph/PROMPT_PLAN.md
 !.ralph/constitution.md
 
-# Node / TypeScript build artifacts
+# Node / pnpm
 node_modules/
+
+# Build output
 dist/
 
-# Test coverage & caches
+# Test output
 coverage/
 .vitest-cache/
+
+# Editor / OS noise
+.DS_Store
+*.log
