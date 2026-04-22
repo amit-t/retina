@@ -16,7 +16,7 @@ working state (lint + typecheck + existing tests green).
   - [ ] Create `src/http/middleware/size-limit.ts` — reject when `Content-Length > MAX_IMAGE_BYTES` with `ImageTooLargeError` before buffering
   - [ ] Create `src/http/middleware/error.ts` — catch `RetinaError` → envelope `{error: {code, message, requestId, details}}` with `status`; catch unknown → `InternalError` 500 with stack logged
   - [ ] Create `src/http/routes/health.ts` — `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 adds real redis probe)
-  - [ ] Create `src/app.ts` exporting `buildApp(deps)` that composes middleware in order (request-id → size-limit → routes → error) and mounts `/healthz`
+  - [x] Create `src/app.ts` exporting `buildApp(deps)` that composes middleware in order (request-id → size-limit → routes → error) and mounts `/healthz`
   - [ ] Vitest unit tests: every error class carries correct `code` and `status`, each middleware behavior, healthz shape, envelope shape on thrown RetinaError subclasses
   - [ ] Acceptance: `pnpm test:unit` passes; thrown `ValidationError` yields 400 JSON envelope with `x-request-id` header echoed
   - [ ] Depends on: R01
