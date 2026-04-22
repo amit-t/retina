@@ -65,7 +65,7 @@ export function createErrorHandler({ logger }: ErrorMiddlewareDeps): ErrorHandle
       return c.json(buildEnvelope(err, requestId), err.status as ContentfulStatusCode);
     }
 
-    const wrapped = new InternalError({ cause: err });
+    const wrapped = new InternalError('Internal server error', { cause: err });
     logger.error(
       {
         requestId,

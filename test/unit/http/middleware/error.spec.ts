@@ -44,11 +44,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({
-            code: 'invalid_request',
-            status: 400,
-            message: 'bad body',
-          });
+          throw new RetinaError('invalid_request', 400, 'bad body');
         },
         attachRequestId: 'req-123',
       });
@@ -73,10 +69,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({
-            code: 'provider_failed',
-            status: 502,
-            message: 'all providers exhausted',
+          throw new RetinaError('provider_failed', 502, 'all providers exhausted', {
             details: {
               attempts: [{ provider: 'openai', model: 'gpt-4o', code: '500', message: 'boom' }],
             },
@@ -99,7 +92,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({ code: 'job_not_found', status: 404, message: 'missing' });
+          throw new RetinaError('job_not_found', 404, 'missing');
         },
         attachRequestId: 'req-nd',
       });
@@ -115,7 +108,7 @@ describe('createErrorHandler', () => {
       const logger = createLogger();
       class ImageTooLargeError extends RetinaError {
         constructor() {
-          super({ code: 'image_too_large', status: 413, message: 'too big' });
+          super('image_too_large', 413, 'too big');
         }
       }
       const app = buildApp({
@@ -137,7 +130,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({ code: 'invalid_request', status: 400, message: 'nope' });
+          throw new RetinaError('invalid_request', 400, 'nope');
         },
         attachRequestId: 'req-log',
       });
@@ -247,7 +240,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({ code: 'invalid_request', status: 400, message: 'x' });
+          throw new RetinaError('invalid_request', 400, 'x');
         },
         attachRequestId: 'ctx-id',
       });
@@ -263,7 +256,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({ code: 'invalid_request', status: 400, message: 'x' });
+          throw new RetinaError('invalid_request', 400, 'x');
         },
       });
 
@@ -278,7 +271,7 @@ describe('createErrorHandler', () => {
       const app = buildApp({
         logger,
         throwFn: () => {
-          throw new RetinaError({ code: 'invalid_request', status: 400, message: 'x' });
+          throw new RetinaError('invalid_request', 400, 'x');
         },
       });
 
