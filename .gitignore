@@ -4,3 +4,11 @@
 !.ralph/PROMPT.md
 !.ralph/PROMPT_PLAN.md
 !.ralph/constitution.md
+
+# Node / TypeScript build artifacts
+node_modules/
+dist/
+
+# Test coverage & caches
+coverage/
+.vitest-cache/
