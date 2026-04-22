@@ -4,3 +4,17 @@
 !.ralph/PROMPT.md
 !.ralph/PROMPT_PLAN.md
 !.ralph/constitution.md
+
+# Node / pnpm
+node_modules/
+
+# Build output
+dist/
+
+# Test output
+coverage/
+.vitest-cache/
+
+# Editor / OS noise
+.DS_Store
+*.log
