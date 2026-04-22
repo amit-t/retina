@@ -24,8 +24,10 @@ export function sizeLimit(maxBytes: number): MiddlewareHandler {
       const parsed = Number.parseInt(header, 10);
       if (Number.isFinite(parsed) && parsed > maxBytes) {
         throw new ImageTooLargeError('Request body exceeds MAX_IMAGE_BYTES', {
-          contentLength: parsed,
-          maxBytes,
+          details: {
+            contentLength: parsed,
+            maxBytes,
+          },
         });
       }
     }
