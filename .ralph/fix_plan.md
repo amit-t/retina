@@ -9,17 +9,17 @@ working state (lint + typecheck + existing tests green).
 
 ## High Priority
 
-- [ ] **R02** Hono app skeleton + RetinaError hierarchy + core middleware + /healthz stub + logger
-  - [ ] Create `src/core/errors.ts` with `RetinaError` base (`code`, `status`, `cause`, `details`) plus all 10 subclasses from spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`)
-  - [ ] Create `src/logger.ts` exporting a pino JSON logger writing to stdout, level from parameter (wired to config in R13)
-  - [ ] Create `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
-  - [ ] Create `src/http/middleware/size-limit.ts` — reject when `Content-Length > MAX_IMAGE_BYTES` with `ImageTooLargeError` before buffering
-  - [ ] Create `src/http/middleware/error.ts` — catch `RetinaError` → envelope `{error: {code, message, requestId, details}}` with `status`; catch unknown → `InternalError` 500 with stack logged
-  - [ ] Create `src/http/routes/health.ts` — `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 adds real redis probe)
-  - [ ] Create `src/app.ts` exporting `buildApp(deps)` that composes middleware in order (request-id → size-limit → routes → error) and mounts `/healthz`
-  - [ ] Vitest unit tests: every error class carries correct `code` and `status`, each middleware behavior, healthz shape, envelope shape on thrown RetinaError subclasses
-  - [ ] Acceptance: `pnpm test:unit` passes; thrown `ValidationError` yields 400 JSON envelope with `x-request-id` header echoed
-  - [ ] Depends on: R01
+- [x] **R02** Hono app skeleton + RetinaError hierarchy + core middleware + /healthz stub + logger
+  - [x] Create `src/core/errors.ts` with `RetinaError` base (`code`, `status`, `cause`, `details`) plus all 10 subclasses from spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`)
+  - [x] Create `src/logger.ts` exporting a pino JSON logger writing to stdout, level from parameter (wired to config in R13)
+  - [x] Create `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
+  - [x] Create `src/http/middleware/size-limit.ts` — reject when `Content-Length > MAX_IMAGE_BYTES` with `ImageTooLargeError` before buffering
+  - [x] Create `src/http/middleware/error.ts` — catch `RetinaError` → envelope `{error: {code, message, requestId, details}}` with `status`; catch unknown → `InternalError` 500 with stack logged
+  - [x] Create `src/http/routes/health.ts` — `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 adds real redis probe)
+  - [x] Create `src/app.ts` exporting `buildApp(deps)` that composes middleware in order (request-id → size-limit → routes → error) and mounts `/healthz`
+  - [x] Vitest unit tests: every error class carries correct `code` and `status`, each middleware behavior, healthz shape, envelope shape on thrown RetinaError subclasses
+  - [x] Acceptance: `pnpm test:unit` passes; thrown `ValidationError` yields 400 JSON envelope with `x-request-id` header echoed
+  - [x] Depends on: R01
 
 - [ ] **R03** Config loader with Zod (src/config.ts)
   - [ ] Define a Zod schema covering every env var in spec §Configuration (PORT, LOG_LEVEL, REDIS_URL, MAX_IMAGE_BYTES, PROVIDERS, DEFAULT_PROVIDER, DEFAULT_MODEL, FALLBACK_CHAIN, RETRY_ATTEMPTS, RETRY_BACKOFF_MS, AWS_REGION, AWS_ACCESS_KEY_ID/SECRET, OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, TEMPLATES_DIR, JOB_RESULT_TTL_SECONDS, JOB_MAX_ATTEMPTS, WORKER_CONCURRENCY, REQUEST_TIMEOUT_MS, SSE_HEARTBEAT_MS)
