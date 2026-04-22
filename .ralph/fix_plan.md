@@ -10,10 +10,10 @@ working state (lint + typecheck + existing tests green).
 ## High Priority
 
 - [ ] **R01** Scaffold pnpm + strict TypeScript + Biome + Vitest + tsconfig
-  - [ ] Create `package.json` declaring `packageManager: pnpm`, Node >=20 engines, scripts `dev` (tsx watch), `build` (tsc emit to `dist`), `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), `format` (`biome format --write .`), `test`, `test:unit`, `test:replay`, `test:e2e`, `test:live`
+  - [x] Create `package.json` declaring `packageManager: pnpm`, Node >=20 engines, scripts `dev` (tsx watch), `build` (tsc emit to `dist`), `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), `format` (`biome format --write .`), `test`, `test:unit`, `test:replay`, `test:e2e`, `test:live`
   - [x] Declare runtime deps: `hono`, `@hono/node-server`, `zod`, `pino`, `ai`, `@ai-sdk/openai`, `@ai-sdk/amazon-bedrock`, `@ai-sdk/anthropic`, `@ai-sdk/google`, `ioredis`, `undici`
   - [ ] Declare dev deps: `typescript`, `@types/node`, `tsx`, `vitest`, `@vitest/coverage-v8`, `@biomejs/biome`, `ioredis-mock`, `@testcontainers/redis`
-  - [ ] Create `tsconfig.json` with `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `target: ES2022`, `module: ESNext`, `moduleResolution: bundler`, `outDir: dist`, `rootDir: src`
+  - [x] Create `tsconfig.json` with `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `target: ES2022`, `module: ESNext`, `moduleResolution: bundler`, `outDir: dist`, `rootDir: src`
   - [ ] Create `biome.json` (2-space indent, single quotes, trailing commas `all`, `organizeImports` on, lint recommended + TS rules)
   - [ ] Create `vitest.config.ts` with 4 project layers (unit/replay/e2e/live) each scoped by `test/<layer>/**`, coverage provider `v8`, threshold 80% on `src/**` excluding `src/index.ts`
   - [ ] Update `.gitignore` to ignore `node_modules/`, `dist/`, `coverage/`, `.vitest-cache/`
