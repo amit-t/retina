@@ -5,3 +5,18 @@
 !.ralph/PROMPT_PLAN.md
 !.ralph/constitution.md
 !.ralph/AGENT.md
+
+# Node / build artifacts
+node_modules/
+dist/
+coverage/
+.vitest-cache/
+
+# Env and local overrides
+.env
+.env.local
+.env.*.local
+
+# OS / editor
+.DS_Store
+*.log

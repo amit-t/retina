@@ -1,0 +1,48 @@
+{
+  "name": "retina",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Self-hostable image understanding API. Bring your own LLM keys or Bedrock endpoint.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "biome": "biome",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:replay": "vitest run --project replay",
+    "test:e2e": "vitest run --project e2e",
+    "test:live": "vitest run --project live"
+  },
+  "dependencies": {
+    "@ai-sdk/amazon-bedrock": "4.0.96",
+    "@ai-sdk/anthropic": "3.0.71",
+    "@ai-sdk/google": "3.0.64",
+    "@ai-sdk/openai": "3.0.53",
+    "@hono/node-server": "2.0.0",
+    "ai": "6.0.168",
+    "hono": "4.12.14",
+    "ioredis": "5.10.1",
+    "pino": "10.3.1",
+    "undici": "8.1.0",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.12",
+    "@testcontainers/redis": "11.14.0",
+    "@types/node": "25.6.0",
+    "@vitest/coverage-v8": "4.1.5",
+    "ioredis-mock": "8.13.1",
+    "tsx": "4.21.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.5"
+  }
+}
