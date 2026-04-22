@@ -12,7 +12,7 @@ working state (lint + typecheck + existing tests green).
 - [ ] **R02** Hono app skeleton + RetinaError hierarchy + core middleware + /healthz stub + logger
   - [ ] Create `src/core/errors.ts` with `RetinaError` base (`code`, `status`, `cause`, `details`) plus all 10 subclasses from spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`)
   - [ ] Create `src/logger.ts` exporting a pino JSON logger writing to stdout, level from parameter (wired to config in R13)
-  - [ ] Create `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
+  - [x] Create `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
   - [ ] Create `src/http/middleware/size-limit.ts` — reject when `Content-Length > MAX_IMAGE_BYTES` with `ImageTooLargeError` before buffering
   - [ ] Create `src/http/middleware/error.ts` — catch `RetinaError` → envelope `{error: {code, message, requestId, details}}` with `status`; catch unknown → `InternalError` 500 with stack logged
   - [ ] Create `src/http/routes/health.ts` — `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 adds real redis probe)
