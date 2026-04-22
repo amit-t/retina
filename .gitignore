@@ -5,16 +5,17 @@
 !.ralph/PROMPT_PLAN.md
 !.ralph/constitution.md
 
-# Node / pnpm
+# Node / build artifacts
 node_modules/
-
-# Build output
 dist/
-
-# Test output
 coverage/
 .vitest-cache/
 
-# Editor / OS noise
+# Env and local overrides
+.env
+.env.local
+.env.*.local
+
+# OS / editor
 .DS_Store
 *.log

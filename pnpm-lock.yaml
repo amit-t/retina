@@ -9,62 +9,62 @@ importers:
   .:
     dependencies:
       '@ai-sdk/amazon-bedrock':
-        specifier: ^4.0.96
+        specifier: 4.0.96
         version: 4.0.96(zod@4.3.6)
       '@ai-sdk/anthropic':
-        specifier: ^3.0.71
+        specifier: 3.0.71
         version: 3.0.71(zod@4.3.6)
       '@ai-sdk/google':
-        specifier: ^3.0.64
+        specifier: 3.0.64
         version: 3.0.64(zod@4.3.6)
       '@ai-sdk/openai':
-        specifier: ^3.0.53
+        specifier: 3.0.53
         version: 3.0.53(zod@4.3.6)
       '@hono/node-server':
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0(hono@4.12.14)
       ai:
-        specifier: ^6.0.168
+        specifier: 6.0.168
         version: 6.0.168(zod@4.3.6)
       hono:
-        specifier: ^4.12.14
+        specifier: 4.12.14
         version: 4.12.14
       ioredis:
-        specifier: ^5.10.1
+        specifier: 5.10.1
         version: 5.10.1
       pino:
-        specifier: ^10.3.1
+        specifier: 10.3.1
         version: 10.3.1
       undici:
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0
       zod:
-        specifier: ^4.3.6
+        specifier: 4.3.6
         version: 4.3.6
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.4.12
+        specifier: 2.4.12
         version: 2.4.12
       '@testcontainers/redis':
-        specifier: ^11.14.0
+        specifier: 11.14.0
         version: 11.14.0
       '@types/node':
-        specifier: ^25.6.0
+        specifier: 25.6.0
         version: 25.6.0
       '@vitest/coverage-v8':
-        specifier: ^4.1.5
+        specifier: 4.1.5
         version: 4.1.5(vitest@4.1.5)
       ioredis-mock:
-        specifier: ^8.13.1
+        specifier: 8.13.1
         version: 8.13.1(@types/ioredis-mock@8.2.7(ioredis@5.10.1))(ioredis@5.10.1)
       tsx:
-        specifier: ^4.21.0
+        specifier: 4.21.0
         version: 4.21.0
       typescript:
-        specifier: ^6.0.3
+        specifier: 6.0.3
         version: 6.0.3
       vitest:
-        specifier: ^4.1.5
+        specifier: 4.1.5
         version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.9(@types/node@25.6.0)(esbuild@0.27.7)(tsx@4.21.0)(yaml@2.8.3))
 
 packages:
@@ -391,6 +391,9 @@ packages:
 
   '@ioredis/commands@1.5.1':
     resolution: {integrity: sha512-JH8ZL/ywcJyR9MmJ5BNqZllXNZQqQbnVZOqpPQqE1vHiFgAw4NHbvE0FOduNU8IX9babitBT46571OnPTT0Zcw==}
+
+  '@ioredis/commands@1.7.0':
+    resolution: {integrity: sha512-5E3KP12g1Po3xMdaym6N3VBibWAH/vv7XxGl8M20KQyPfZWB7sAhLb90+9IX/WJWFHuRFai5caz+DXKQbLI51g==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -1865,6 +1868,8 @@ snapshots:
 
   '@ioredis/commands@1.5.1': {}
 
+  '@ioredis/commands@1.7.0': {}
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -2478,7 +2483,7 @@ snapshots:
   ioredis-mock@8.13.1(@types/ioredis-mock@8.2.7(ioredis@5.10.1))(ioredis@5.10.1):
     dependencies:
       '@ioredis/as-callback': 3.0.0
-      '@ioredis/commands': 1.5.1
+      '@ioredis/commands': 1.7.0
       '@types/ioredis-mock': 8.2.7(ioredis@5.10.1)
       fengari: 0.1.5
       fengari-interop: 0.1.4(fengari@0.1.5)

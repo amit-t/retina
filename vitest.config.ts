@@ -1,51 +1,12 @@
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  cacheDir: '.vitest-cache',
   test: {
-    projects: [
-      {
-        extends: true,
-        test: {
-          name: 'unit',
-          include: ['test/unit/**/*.{test,spec}.ts'],
-          environment: 'node',
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'replay',
-          include: ['test/replay/**/*.{test,spec}.ts'],
-          environment: 'node',
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'e2e',
-          include: ['test/e2e/**/*.{test,spec}.ts'],
-          environment: 'node',
-          testTimeout: 60_000,
-          hookTimeout: 60_000,
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'live',
-          include: ['test/live/**/*.{test,spec}.ts'],
-          environment: 'node',
-          testTimeout: 120_000,
-          hookTimeout: 120_000,
-        },
-      },
-    ],
+    passWithNoTests: true,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
-      reportsDirectory: './coverage',
-      include: ['src/**/*.ts'],
+      include: ['src/**'],
       exclude: ['src/index.ts'],
       thresholds: {
         lines: 80,
@@ -54,5 +15,35 @@ export default defineConfig({
         statements: 80,
       },
     },
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['test/unit/**/*.{spec,test}.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'replay',
+          include: ['test/replay/**/*.{spec,test}.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'e2e',
+          include: ['test/e2e/**/*.{spec,test}.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'live',
+          include: ['test/live/**/*.{spec,test}.ts'],
+        },
+      },
+    ],
   },
 });
