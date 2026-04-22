@@ -1,0 +1,23 @@
+{
+  "name": "retina",
+  "version": "0.0.0",
+  "description": "Self-hostable image understanding API backed by pluggable vision LLM providers.",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run --project unit --project replay --project e2e",
+    "test:unit": "vitest run --project unit",
+    "test:replay": "vitest run --project replay",
+    "test:e2e": "vitest run --project e2e",
+    "test:live": "vitest run --project live"
+  }
+}
