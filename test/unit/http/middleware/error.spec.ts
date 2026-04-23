@@ -1,6 +1,19 @@
 import { Hono } from 'hono';
 import { describe, expect, it, vi } from 'vitest';
-import { InternalError, RetinaError } from '../../../../src/core/errors';
+import {
+  ImageFetchError,
+  ImageTooLargeError,
+  InternalError,
+  JobNotFoundError,
+  ProviderFailedError,
+  ProviderRateLimitError,
+  ProviderTimeoutError,
+  RedisUnavailableError,
+  RetinaError,
+  TemplateNotFoundError,
+  UnsupportedMediaTypeError,
+  ValidationError,
+} from '../../../../src/core/errors';
 import {
   createErrorHandler,
   type ErrorMiddlewareLogger,
@@ -288,6 +301,120 @@ describe('createErrorHandler', () => {
       expect(err.code).toBe('internal_error');
       expect(err.status).toBe(500);
       expect(err).toBeInstanceOf(RetinaError);
+    });
+  });
+
+  // Parametrized coverage for every concrete RetinaError subclass exported
+  // from src/core/errors.ts. The task R02e acceptance criteria call for
+  // "envelope shape for each RetinaError subclass + unknown"; this table
+  // enumerates all 11 subclasses so any change to code/status is caught
+  // by the middleware contract.
+  describe('envelope shape per RetinaError subclass', () => {
+    const subclasses: ReadonlyArray<{
+      name: string;
+      code: string;
+      status: number;
+      build: () => RetinaError;
+    }> = [
+      {
+        name: 'ValidationError',
+        code: 'invalid_request',
+        status: 400,
+        build: () => new ValidationError('bad body'),
+      },
+      {
+        name: 'ImageTooLargeError',
+        code: 'image_too_large',
+        status: 413,
+        build: () => new ImageTooLargeError('too big'),
+      },
+      {
+        name: 'UnsupportedMediaTypeError',
+        code: 'unsupported_media_type',
+        status: 415,
+        build: () => new UnsupportedMediaTypeError('not an image'),
+      },
+      {
+        name: 'ImageFetchError',
+        code: 'image_fetch_failed',
+        status: 400,
+        build: () => new ImageFetchError('upstream 500'),
+      },
+      {
+        name: 'TemplateNotFoundError',
+        code: 'template_not_found',
+        status: 404,
+        build: () => new TemplateNotFoundError('no such template'),
+      },
+      {
+        name: 'JobNotFoundError',
+        code: 'job_not_found',
+        status: 404,
+        build: () => new JobNotFoundError('no such job'),
+      },
+      {
+        name: 'ProviderFailedError',
+        code: 'provider_failed',
+        status: 502,
+        build: () =>
+          new ProviderFailedError('all providers exhausted', {
+            details: { attempts: [] },
+          }),
+      },
+      {
+        name: 'ProviderTimeoutError',
+        code: 'provider_timeout',
+        status: 504,
+        build: () => new ProviderTimeoutError('deadline exceeded'),
+      },
+      {
+        name: 'ProviderRateLimitError',
+        code: 'provider_rate_limited',
+        status: 429,
+        build: () => new ProviderRateLimitError('slow down'),
+      },
+      {
+        name: 'RedisUnavailableError',
+        code: 'redis_unavailable',
+        status: 503,
+        build: () => new RedisUnavailableError('no redis'),
+      },
+      {
+        name: 'InternalError',
+        code: 'internal_error',
+        status: 500,
+        build: () => new InternalError('boom'),
+      },
+    ];
+
+    it.for(subclasses)('maps $name → {status:$status, code:$code} envelope', async ({
+      code,
+      status,
+      build,
+    }) => {
+      const logger = createLogger();
+      const app = buildApp({
+        logger,
+        throwFn: () => {
+          throw build();
+        },
+        attachRequestId: `req-${code}`,
+      });
+
+      const res = await app.request('/boom');
+      expect(res.status).toBe(status);
+      expect(res.headers.get('x-request-id')).toBe(`req-${code}`);
+      expect(res.headers.get('content-type') ?? '').toMatch(/application\/json/);
+      const body = (await res.json()) as {
+        error: { code: string; message: string; requestId: string; details?: unknown };
+      };
+      expect(body.error.code).toBe(code);
+      expect(typeof body.error.message).toBe('string');
+      expect(body.error.message.length).toBeGreaterThan(0);
+      expect(body.error.requestId).toBe(`req-${code}`);
+      // RetinaError subclasses log at warn, never at error.
+      expect(logger.warn).toHaveBeenCalledTimes(1);
+      expect(logger.error).not.toHaveBeenCalled();
     });
   });
 });
