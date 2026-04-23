@@ -16,6 +16,9 @@
  *                                          only when `deps.router` is supplied)
  *   - src/http/routes/ocr.ts             (POST /v1/ocr — mounted only when
  *                                          `deps.router` is supplied)
+ *   - src/http/routes/jobs.ts            (POST /v1/jobs, GET /v1/jobs/:id —
+ *                                          mounted only when `deps.jobStore`
+ *                                          is supplied; R17)
  */
 
 import { Hono } from 'hono';
@@ -25,7 +28,9 @@ import { type RequestIdVariables, requestId } from './http/middleware/request-id
 import { sizeLimit } from './http/middleware/size-limit';
 import { createDescribeRoute } from './http/routes/describe';
 import { createHealthRoute } from './http/routes/health';
+import { createJobsRoute } from './http/routes/jobs';
 import { createOcrRoute } from './http/routes/ocr';
+import type { JobStore } from './jobs/store';
 import { buildLogger, type Logger } from './logger';
 
 /** Default body cap (10 MiB) until R03 wires `config.MAX_IMAGE_BYTES`. */
@@ -52,7 +57,9 @@ export interface BuildAppDeps {
    *  mounted, keeping /healthz-only test harnesses self-contained. */
   router?: TaskRouter;
   templates?: unknown;
-  jobStore?: unknown;
+  /** R14 `JobStore`. When supplied `buildApp()` mounts `/v1/jobs`
+   *  (POST + GET /:id, R17). SSE stream route is added in R18. */
+  jobStore?: JobStore;
 }
 
 /** Hono context variables set by this app's middleware. */
@@ -102,6 +109,9 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
       }),
     );
     app.route('/', createOcrRoute({ router: deps.router, maxBytes }));
+  }
+  if (deps.jobStore !== undefined) {
+    app.route('/', createJobsRoute({ store: deps.jobStore, maxBytes }));
   }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
