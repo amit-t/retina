@@ -1,0 +1,37 @@
+{
+  "provider": "bedrock",
+  "task": "describe",
+  "model": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+  "request": {
+    "origin": "https://bedrock-runtime.us-east-1.amazonaws.com",
+    "method": "POST",
+    "path": "/model/us.anthropic.claude-3-5-sonnet-20241022-v2%3A0/converse"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "metrics": {
+        "latencyMs": 742
+      },
+      "output": {
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "text": "A replay fixture image: a steaming mug of black coffee beside an open notebook on a wooden desk."
+            }
+          ]
+        }
+      },
+      "stopReason": "end_turn",
+      "usage": {
+        "inputTokens": 158,
+        "outputTokens": 26,
+        "totalTokens": 184
+      }
+    }
+  }
+}
