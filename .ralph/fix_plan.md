@@ -16,7 +16,6 @@ can execute without reading any other task.
 
 - [ ] **R02a** Create `src/core/errors.ts`: export `RetinaError` base (`code`, `status`, `cause`, `details`) plus 11 subclasses per spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`). Vitest in `test/unit/errors.spec.ts`: each class carries correct `code` + HTTP `status`. Depends on: R01.
 - [ ] **R02b** Create `src/logger.ts`: export `buildLogger(level)` returning a pino JSON logger writing to stdout. `level` is a parameter (wired to config in R13). Vitest in `test/unit/logger.spec.ts`: respects level, JSON output. Depends on: R01.
-- [ ] **R02d** Create `src/http/middleware/size-limit.ts`: Hono middleware rejecting requests when `Content-Length > MAX_IMAGE_BYTES` (config via Hono context) with `ImageTooLargeError` BEFORE buffering. Vitest in `test/unit/middleware-size-limit.spec.ts`: over-limit throws, under-limit passes. Depends on: R02a.
 - [ ] **R02e** Create `src/http/middleware/error.ts`: Hono error middleware catching `RetinaError` → JSON envelope `{error: {code, message, requestId, details}}` with correct `status`; unknown error → `InternalError` 500 with stack logged. Echo `x-request-id` header on response. Vitest in `test/unit/middleware-error.spec.ts`: envelope shape for each RetinaError subclass + unknown. Depends on: R02a, R02c.
 - [ ] **R02f** Create `src/http/routes/health.ts`: `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 upgrades redis probe). Vitest in `test/unit/route-health.spec.ts`: 200 + shape. Depends on: R02a.
 - [ ] **R02h** Verify full R02 composition: run `pnpm test:unit` across R02a-R02g; integration-style test in `test/unit/app-compose.spec.ts` that thrown `ValidationError` inside a route yields 400 JSON envelope with `x-request-id` echoed. Depends on: R02a, R02b, R02c, R02d, R02e, R02f, R02g.
@@ -76,6 +75,7 @@ Reference only. Do NOT add ralph tasks until the user promotes them.
 - [x] Project enabled for Ralph
 - [x] **R01** Scaffold pnpm + strict TypeScript + Biome + Vitest + tsconfig — see commit history
 - [x] **R02c** `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
+- [x] **R02d** `src/http/middleware/size-limit.ts` — Hono `sizeLimit(maxBytes)` middleware throwing `ImageTooLargeError` when `Content-Length` exceeds the cap BEFORE body buffering. `maxBytes` is injected at `buildApp()` composition time from `config.MAX_IMAGE_BYTES` (dependency-injected, not read from context at request time — matches the request-id pattern and keeps the middleware pure). Covered by `test/unit/http/middleware/size-limit.test.ts` (6 cases: absent/under/at limit pass, over limit → 413 envelope, non-numeric header ignored, direct-invocation throws `ImageTooLargeError` instance).
 - [x] **R02g** `src/app.ts` exporting `buildApp(deps)` composing middleware in order (request-id → size-limit → routes → error) and mounting `/healthz`
 
 ## Notes
