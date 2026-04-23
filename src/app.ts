@@ -25,13 +25,17 @@ import { type RequestIdVariables, requestId } from './http/middleware/request-id
 import { sizeLimit } from './http/middleware/size-limit';
 import { createDescribeRoute } from './http/routes/describe';
 import { createHealthRoute } from './http/routes/health';
+import { createJobsStreamRoute } from './http/routes/jobs';
 import { createOcrRoute } from './http/routes/ocr';
+import type { StreamJobStore } from './jobs/sse';
 import { buildLogger, type Logger } from './logger';
 
 /** Default body cap (10 MiB) until R03 wires `config.MAX_IMAGE_BYTES`. */
 const DEFAULT_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 /** Default sync request deadline (30 s) until R13 wires `config.REQUEST_TIMEOUT_MS`. */
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+/** Default SSE heartbeat cadence (15 s) until R13 wires `config.SSE_HEARTBEAT_MS`. */
+const DEFAULT_SSE_HEARTBEAT_MS = 15_000;
 
 /**
  * Dependencies wired into the app at bootstrap (R13).
@@ -45,14 +49,21 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
  *   - `jobStore`  — R14 (`JobStore`, used by /v1/jobs routes in R17+)
  */
 export interface BuildAppDeps {
-  config?: { MAX_IMAGE_BYTES?: number; REQUEST_TIMEOUT_MS?: number };
+  config?: {
+    MAX_IMAGE_BYTES?: number;
+    REQUEST_TIMEOUT_MS?: number;
+    SSE_HEARTBEAT_MS?: number;
+  };
   logger?: Logger | ErrorMiddlewareLogger;
   /** R06c `ProviderRouter` (or any structural `TaskRouter`). When omitted the
    *  routes that need a router (e.g. `/v1/describe`, `/v1/ocr`) are not
    *  mounted, keeping /healthz-only test harnesses self-contained. */
   router?: TaskRouter;
   templates?: unknown;
-  jobStore?: unknown;
+  /** R14 `JobStore` (structural `StreamJobStore`). When supplied the
+   *  jobs-streaming route (`GET /v1/jobs/:id/stream`, R18) is mounted;
+   *  R17's POST/GET routes will layer on top of the same dep. */
+  jobStore?: StreamJobStore;
 }
 
 /** Hono context variables set by this app's middleware. */
@@ -81,6 +92,7 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const maxBytes = deps.config?.MAX_IMAGE_BYTES ?? DEFAULT_MAX_IMAGE_BYTES;
   const requestTimeoutMs = deps.config?.REQUEST_TIMEOUT_MS ?? DEFAULT_REQUEST_TIMEOUT_MS;
+  const sseHeartbeatMs = deps.config?.SSE_HEARTBEAT_MS ?? DEFAULT_SSE_HEARTBEAT_MS;
   const logger = deps.logger ?? buildLogger('info');
 
   // 1. request-id — runs first so every downstream log/response carries it.
@@ -102,6 +114,9 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
       }),
     );
     app.route('/', createOcrRoute({ router: deps.router, maxBytes }));
+  }
+  if (deps.jobStore !== undefined) {
+    app.route('/', createJobsStreamRoute({ store: deps.jobStore, heartbeatMs: sseHeartbeatMs }));
   }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
