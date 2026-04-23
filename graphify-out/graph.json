@@ -4,6 +4,555 @@
   "graph": {},
   "nodes": [
     {
+      "label": "vitest.config.ts",
+      "file_type": "code",
+      "source_file": "vitest.config.ts",
+      "source_location": "L1",
+      "id": "vitest_config_ts",
+      "community": 17,
+      "norm_label": "vitest.config.ts"
+    },
+    {
+      "label": "providers-factory.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/providers-factory.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_providers_factory_spec_ts",
+      "community": 6,
+      "norm_label": "providers-factory.spec.ts"
+    },
+    {
+      "label": "baseConfig()",
+      "file_type": "code",
+      "source_file": "test/unit/providers-factory.spec.ts",
+      "source_location": "L17",
+      "id": "providers_factory_spec_baseconfig",
+      "community": 6,
+      "norm_label": "baseconfig()"
+    },
+    {
+      "label": "stubProvider()",
+      "file_type": "code",
+      "source_file": "test/unit/providers-factory.spec.ts",
+      "source_location": "L25",
+      "id": "providers_factory_spec_stubprovider",
+      "community": 6,
+      "norm_label": "stubprovider()"
+    },
+    {
+      "label": "logger.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/logger.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_logger_spec_ts",
+      "community": 18,
+      "norm_label": "logger.spec.ts"
+    },
+    {
+      "label": "errors.test.ts",
+      "file_type": "code",
+      "source_file": "test/unit/core/errors.test.ts",
+      "source_location": "L1",
+      "id": "test_unit_core_errors_test_ts",
+      "community": 19,
+      "norm_label": "errors.test.ts"
+    },
+    {
+      "label": "request-id.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/request-id.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_http_middleware_request_id_spec_ts",
+      "community": 1,
+      "norm_label": "request-id.spec.ts"
+    },
+    {
+      "label": "buildApp()",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/request-id.spec.ts",
+      "source_location": "L12",
+      "id": "request_id_spec_buildapp",
+      "community": 1,
+      "norm_label": "buildapp()"
+    },
+    {
+      "label": "size-limit.test.ts",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/size-limit.test.ts",
+      "source_location": "L1",
+      "id": "test_unit_http_middleware_size_limit_test_ts",
+      "community": 5,
+      "norm_label": "size-limit.test.ts"
+    },
+    {
+      "label": "buildApp()",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/size-limit.test.ts",
+      "source_location": "L8",
+      "id": "size_limit_test_buildapp",
+      "community": 5,
+      "norm_label": "buildapp()"
+    },
+    {
+      "label": "error.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_http_middleware_error_spec_ts",
+      "community": 0,
+      "norm_label": "error.spec.ts"
+    },
+    {
+      "label": "createLogger()",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L9",
+      "id": "error_spec_createlogger",
+      "community": 0,
+      "norm_label": "createlogger()"
+    },
+    {
+      "label": "buildApp()",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L19",
+      "id": "error_spec_buildapp",
+      "community": 0,
+      "norm_label": "buildapp()"
+    },
+    {
+      "label": "ImageTooLargeError",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L109",
+      "id": "error_spec_imagetoolargeerror",
+      "community": 0,
+      "norm_label": "imagetoolargeerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L110",
+      "id": "error_spec_imagetoolargeerror_constructor",
+      "community": 0,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "health.test.ts",
+      "file_type": "code",
+      "source_file": "test/unit/http/routes/health.test.ts",
+      "source_location": "L1",
+      "id": "test_unit_http_routes_health_test_ts",
+      "community": 20,
+      "norm_label": "health.test.ts"
+    },
+    {
+      "label": "app.ts",
+      "file_type": "code",
+      "source_file": "src/app.ts",
+      "source_location": "L1",
+      "id": "src_app_ts",
+      "community": 1,
+      "norm_label": "app.ts"
+    },
+    {
+      "label": "buildApp()",
+      "file_type": "code",
+      "source_file": "src/app.ts",
+      "source_location": "L68",
+      "id": "app_buildapp",
+      "community": 1,
+      "norm_label": "buildapp()"
+    },
+    {
+      "label": "logger.ts",
+      "file_type": "code",
+      "source_file": "src/logger.ts",
+      "source_location": "L1",
+      "id": "src_logger_ts",
+      "community": 1,
+      "norm_label": "logger.ts"
+    },
+    {
+      "label": "createLogger()",
+      "file_type": "code",
+      "source_file": "src/logger.ts",
+      "source_location": "L15",
+      "id": "logger_createlogger",
+      "community": 1,
+      "norm_label": "createlogger()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "id": "src_index_ts",
+      "community": 21,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "errors.ts",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L1",
+      "id": "src_core_errors_ts",
+      "community": 3,
+      "norm_label": "errors.ts"
+    },
+    {
+      "label": "RetinaError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L31",
+      "id": "errors_retinaerror",
+      "community": 12,
+      "norm_label": "retinaerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L37",
+      "id": "errors_retinaerror_constructor",
+      "community": 12,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ValidationError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L51",
+      "id": "errors_validationerror",
+      "community": 15,
+      "norm_label": "validationerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L52",
+      "id": "errors_validationerror_constructor",
+      "community": 15,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ImageTooLargeError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L58",
+      "id": "errors_imagetoolargeerror",
+      "community": 11,
+      "norm_label": "imagetoolargeerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L59",
+      "id": "errors_imagetoolargeerror_constructor",
+      "community": 11,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "UnsupportedMediaTypeError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L65",
+      "id": "errors_unsupportedmediatypeerror",
+      "community": 9,
+      "norm_label": "unsupportedmediatypeerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L66",
+      "id": "errors_unsupportedmediatypeerror_constructor",
+      "community": 9,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ImageFetchError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L72",
+      "id": "errors_imagefetcherror",
+      "community": 3,
+      "norm_label": "imagefetcherror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L73",
+      "id": "errors_imagefetcherror_constructor",
+      "community": 3,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "TemplateNotFoundError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L79",
+      "id": "errors_templatenotfounderror",
+      "community": 16,
+      "norm_label": "templatenotfounderror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L80",
+      "id": "errors_templatenotfounderror_constructor",
+      "community": 16,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "JobNotFoundError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L86",
+      "id": "errors_jobnotfounderror",
+      "community": 8,
+      "norm_label": "jobnotfounderror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L87",
+      "id": "errors_jobnotfounderror_constructor",
+      "community": 8,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ProviderFailedError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L97",
+      "id": "errors_providerfailederror",
+      "community": 14,
+      "norm_label": "providerfailederror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L98",
+      "id": "errors_providerfailederror_constructor",
+      "community": 14,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ProviderTimeoutError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L104",
+      "id": "errors_providertimeouterror",
+      "community": 13,
+      "norm_label": "providertimeouterror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L105",
+      "id": "errors_providertimeouterror_constructor",
+      "community": 13,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ProviderRateLimitError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L111",
+      "id": "errors_providerratelimiterror",
+      "community": 3,
+      "norm_label": "providerratelimiterror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L112",
+      "id": "errors_providerratelimiterror_constructor",
+      "community": 3,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "RedisUnavailableError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L118",
+      "id": "errors_redisunavailableerror",
+      "community": 7,
+      "norm_label": "redisunavailableerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L119",
+      "id": "errors_redisunavailableerror_constructor",
+      "community": 7,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "InternalError",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L125",
+      "id": "errors_internalerror",
+      "community": 10,
+      "norm_label": "internalerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L126",
+      "id": "errors_internalerror_constructor",
+      "community": 10,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L1",
+      "id": "src_core_providers_index_ts",
+      "community": 4,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "registerProvider()",
+      "file_type": "code",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L132",
+      "id": "index_registerprovider",
+      "community": 4,
+      "norm_label": "registerprovider()"
+    },
+    {
+      "label": "createProvider()",
+      "file_type": "code",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L142",
+      "id": "index_createprovider",
+      "community": 4,
+      "norm_label": "createprovider()"
+    },
+    {
+      "label": "_resetProviderRegistryForTests()",
+      "file_type": "code",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L160",
+      "id": "index_resetproviderregistryfortests",
+      "community": 4,
+      "norm_label": "_resetproviderregistryfortests()"
+    },
+    {
+      "label": "request-id.ts",
+      "file_type": "code",
+      "source_file": "src/http/middleware/request-id.ts",
+      "source_location": "L1",
+      "id": "src_http_middleware_request_id_ts",
+      "community": 1,
+      "norm_label": "request-id.ts"
+    },
+    {
+      "label": "requestId()",
+      "file_type": "code",
+      "source_file": "src/http/middleware/request-id.ts",
+      "source_location": "L34",
+      "id": "request_id_requestid",
+      "community": 1,
+      "norm_label": "requestid()"
+    },
+    {
+      "label": "size-limit.ts",
+      "file_type": "code",
+      "source_file": "src/http/middleware/size-limit.ts",
+      "source_location": "L1",
+      "id": "src_http_middleware_size_limit_ts",
+      "community": 5,
+      "norm_label": "size-limit.ts"
+    },
+    {
+      "label": "sizeLimit()",
+      "file_type": "code",
+      "source_file": "src/http/middleware/size-limit.ts",
+      "source_location": "L20",
+      "id": "size_limit_sizelimit",
+      "community": 5,
+      "norm_label": "sizelimit()"
+    },
+    {
+      "label": "error.ts",
+      "file_type": "code",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L1",
+      "id": "src_http_middleware_error_ts",
+      "community": 0,
+      "norm_label": "error.ts"
+    },
+    {
+      "label": "createErrorHandler()",
+      "file_type": "code",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L50",
+      "id": "error_createerrorhandler",
+      "community": 0,
+      "norm_label": "createerrorhandler()"
+    },
+    {
+      "label": "buildEnvelope()",
+      "file_type": "code",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L83",
+      "id": "error_buildenvelope",
+      "community": 0,
+      "norm_label": "buildenvelope()"
+    },
+    {
+      "label": "getRequestId()",
+      "file_type": "code",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L97",
+      "id": "error_getrequestid",
+      "community": 0,
+      "norm_label": "getrequestid()"
+    },
+    {
+      "label": "serializeError()",
+      "file_type": "code",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L111",
+      "id": "error_serializeerror",
+      "community": 0,
+      "norm_label": "serializeerror()"
+    },
+    {
+      "label": "health.ts",
+      "file_type": "code",
+      "source_file": "src/http/routes/health.ts",
+      "source_location": "L1",
+      "id": "src_http_routes_health_ts",
+      "community": 1,
+      "norm_label": "health.ts"
+    },
+    {
+      "label": "createHealthRoute()",
+      "file_type": "code",
+      "source_file": "src/http/routes/health.ts",
+      "source_location": "L25",
+      "id": "health_createhealthroute",
+      "community": 1,
+      "norm_label": "createhealthroute()"
+    },
+    {
       "label": "Retina",
       "file_type": "document",
       "source_file": "README.md",
@@ -12,9 +561,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_retina",
-      "community": 0,
-      "norm_label": "retina"
+      "community": 2,
+      "norm_label": "retina",
+      "id": "README_retina"
     },
     {
       "label": "Self-hostable image understanding API",
@@ -25,9 +574,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_self_hostable_image_understanding_api",
-      "community": 0,
-      "norm_label": "self-hostable image understanding api"
+      "community": 2,
+      "norm_label": "self-hostable image understanding api",
+      "id": "README_self_hostable_image_understanding_api"
     },
     {
       "label": "Bring your own LLM keys",
@@ -38,9 +587,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_bring_your_own_llm_keys",
-      "community": 0,
-      "norm_label": "bring your own llm keys"
+      "community": 2,
+      "norm_label": "bring your own llm keys",
+      "id": "README_bring_your_own_llm_keys"
     },
     {
       "label": "Bedrock endpoint",
@@ -51,9 +600,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_bedrock_endpoint",
-      "community": 0,
-      "norm_label": "bedrock endpoint"
+      "community": 2,
+      "norm_label": "bedrock endpoint",
+      "id": "README_bedrock_endpoint"
     },
     {
       "label": "Sensing layer for your app",
@@ -64,9 +613,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_sensing_layer_for_your_app",
-      "community": 0,
-      "norm_label": "sensing layer for your app"
+      "community": 2,
+      "norm_label": "sensing layer for your app",
+      "id": "README_sensing_layer_for_your_app"
     },
     {
       "label": "Image-to-text API",
@@ -77,9 +626,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_image_to_text_api",
-      "community": 1,
-      "norm_label": "image-to-text api"
+      "community": 2,
+      "norm_label": "image-to-text api",
+      "id": "README_image_to_text_api"
     },
     {
       "label": "Your own VPC",
@@ -90,9 +639,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_your_own_vpc",
-      "community": 1,
-      "norm_label": "your own vpc"
+      "community": 2,
+      "norm_label": "your own vpc",
+      "id": "README_your_own_vpc"
     },
     {
       "label": "Drop-in API service for image understanding",
@@ -103,9 +652,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_drop_in_api_service",
-      "community": 0,
-      "norm_label": "drop-in api service for image understanding"
+      "community": 2,
+      "norm_label": "drop-in api service for image understanding",
+      "id": "README_drop_in_api_service"
     },
     {
       "label": "Image understanding",
@@ -116,12 +665,636 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "README_image_understanding",
-      "community": 0,
-      "norm_label": "image understanding"
+      "community": 2,
+      "norm_label": "image understanding",
+      "id": "README_image_understanding"
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/providers-factory.spec.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "test_unit_providers_factory_spec_ts",
+      "_tgt": "providers_factory_spec_baseconfig",
+      "source": "test_unit_providers_factory_spec_ts",
+      "target": "providers_factory_spec_baseconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/providers-factory.spec.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "test_unit_providers_factory_spec_ts",
+      "_tgt": "providers_factory_spec_stubprovider",
+      "source": "test_unit_providers_factory_spec_ts",
+      "target": "providers_factory_spec_stubprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/middleware/request-id.spec.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "test_unit_http_middleware_request_id_spec_ts",
+      "_tgt": "request_id_spec_buildapp",
+      "source": "test_unit_http_middleware_request_id_spec_ts",
+      "target": "request_id_spec_buildapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "test/unit/http/middleware/request-id.spec.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "request_id_spec_buildapp",
+      "_tgt": "request_id_requestid",
+      "source": "request_id_spec_buildapp",
+      "target": "request_id_requestid"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/middleware/size-limit.test.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "test_unit_http_middleware_size_limit_test_ts",
+      "_tgt": "size_limit_test_buildapp",
+      "source": "test_unit_http_middleware_size_limit_test_ts",
+      "target": "size_limit_test_buildapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "test/unit/http/middleware/size-limit.test.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "size_limit_test_buildapp",
+      "_tgt": "size_limit_sizelimit",
+      "source": "size_limit_test_buildapp",
+      "target": "size_limit_sizelimit"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "test_unit_http_middleware_error_spec_ts",
+      "_tgt": "error_spec_createlogger",
+      "source": "test_unit_http_middleware_error_spec_ts",
+      "target": "error_spec_createlogger",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "test_unit_http_middleware_error_spec_ts",
+      "_tgt": "error_spec_buildapp",
+      "source": "test_unit_http_middleware_error_spec_ts",
+      "target": "error_spec_buildapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_src": "test_unit_http_middleware_error_spec_ts",
+      "_tgt": "error_spec_imagetoolargeerror",
+      "source": "test_unit_http_middleware_error_spec_ts",
+      "target": "error_spec_imagetoolargeerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_src": "error_spec_buildapp",
+      "_tgt": "error_createerrorhandler",
+      "source": "error_spec_buildapp",
+      "target": "error_createerrorhandler"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/middleware/error.spec.ts",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_src": "error_spec_imagetoolargeerror",
+      "_tgt": "error_spec_imagetoolargeerror_constructor",
+      "source": "error_spec_imagetoolargeerror",
+      "target": "error_spec_imagetoolargeerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "src_app_ts",
+      "_tgt": "app_buildapp",
+      "source": "src_app_ts",
+      "target": "app_buildapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "logger_createlogger",
+      "source": "app_buildapp",
+      "target": "logger_createlogger"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "request_id_requestid",
+      "source": "app_buildapp",
+      "target": "request_id_requestid"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "size_limit_sizelimit",
+      "source": "app_buildapp",
+      "target": "size_limit_sizelimit"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L80",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "health_createhealthroute",
+      "source": "app_buildapp",
+      "target": "health_createhealthroute"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "error_createerrorhandler",
+      "source": "app_buildapp",
+      "target": "error_createerrorhandler"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/logger.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "src_logger_ts",
+      "_tgt": "logger_createlogger",
+      "source": "src_logger_ts",
+      "target": "logger_createlogger",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_retinaerror",
+      "source": "src_core_errors_ts",
+      "target": "errors_retinaerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_validationerror",
+      "source": "src_core_errors_ts",
+      "target": "errors_validationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_imagetoolargeerror",
+      "source": "src_core_errors_ts",
+      "target": "errors_imagetoolargeerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_unsupportedmediatypeerror",
+      "source": "src_core_errors_ts",
+      "target": "errors_unsupportedmediatypeerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L72",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_imagefetcherror",
+      "source": "src_core_errors_ts",
+      "target": "errors_imagefetcherror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_templatenotfounderror",
+      "source": "src_core_errors_ts",
+      "target": "errors_templatenotfounderror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_jobnotfounderror",
+      "source": "src_core_errors_ts",
+      "target": "errors_jobnotfounderror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_providerfailederror",
+      "source": "src_core_errors_ts",
+      "target": "errors_providerfailederror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L104",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_providertimeouterror",
+      "source": "src_core_errors_ts",
+      "target": "errors_providertimeouterror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_providerratelimiterror",
+      "source": "src_core_errors_ts",
+      "target": "errors_providerratelimiterror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_redisunavailableerror",
+      "source": "src_core_errors_ts",
+      "target": "errors_redisunavailableerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L125",
+      "weight": 1.0,
+      "_src": "src_core_errors_ts",
+      "_tgt": "errors_internalerror",
+      "source": "src_core_errors_ts",
+      "target": "errors_internalerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "errors_retinaerror",
+      "_tgt": "errors_retinaerror_constructor",
+      "source": "errors_retinaerror",
+      "target": "errors_retinaerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "errors_validationerror",
+      "_tgt": "errors_validationerror_constructor",
+      "source": "errors_validationerror",
+      "target": "errors_validationerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "errors_imagetoolargeerror",
+      "_tgt": "errors_imagetoolargeerror_constructor",
+      "source": "errors_imagetoolargeerror",
+      "target": "errors_imagetoolargeerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_src": "errors_unsupportedmediatypeerror",
+      "_tgt": "errors_unsupportedmediatypeerror_constructor",
+      "source": "errors_unsupportedmediatypeerror",
+      "target": "errors_unsupportedmediatypeerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "errors_imagefetcherror",
+      "_tgt": "errors_imagefetcherror_constructor",
+      "source": "errors_imagefetcherror",
+      "target": "errors_imagefetcherror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L80",
+      "weight": 1.0,
+      "_src": "errors_templatenotfounderror",
+      "_tgt": "errors_templatenotfounderror_constructor",
+      "source": "errors_templatenotfounderror",
+      "target": "errors_templatenotfounderror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "errors_jobnotfounderror",
+      "_tgt": "errors_jobnotfounderror_constructor",
+      "source": "errors_jobnotfounderror",
+      "target": "errors_jobnotfounderror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L98",
+      "weight": 1.0,
+      "_src": "errors_providerfailederror",
+      "_tgt": "errors_providerfailederror_constructor",
+      "source": "errors_providerfailederror",
+      "target": "errors_providerfailederror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_src": "errors_providertimeouterror",
+      "_tgt": "errors_providertimeouterror_constructor",
+      "source": "errors_providertimeouterror",
+      "target": "errors_providertimeouterror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "errors_providerratelimiterror",
+      "_tgt": "errors_providerratelimiterror_constructor",
+      "source": "errors_providerratelimiterror",
+      "target": "errors_providerratelimiterror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_src": "errors_redisunavailableerror",
+      "_tgt": "errors_redisunavailableerror_constructor",
+      "source": "errors_redisunavailableerror",
+      "target": "errors_redisunavailableerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/errors.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_src": "errors_internalerror",
+      "_tgt": "errors_internalerror_constructor",
+      "source": "errors_internalerror",
+      "target": "errors_internalerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L132",
+      "weight": 1.0,
+      "_src": "src_core_providers_index_ts",
+      "_tgt": "index_registerprovider",
+      "source": "src_core_providers_index_ts",
+      "target": "index_registerprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_src": "src_core_providers_index_ts",
+      "_tgt": "index_createprovider",
+      "source": "src_core_providers_index_ts",
+      "target": "index_createprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/index.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "_src": "src_core_providers_index_ts",
+      "_tgt": "index_resetproviderregistryfortests",
+      "source": "src_core_providers_index_ts",
+      "target": "index_resetproviderregistryfortests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/middleware/request-id.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "src_http_middleware_request_id_ts",
+      "_tgt": "request_id_requestid",
+      "source": "src_http_middleware_request_id_ts",
+      "target": "request_id_requestid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/middleware/size-limit.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "src_http_middleware_size_limit_ts",
+      "_tgt": "size_limit_sizelimit",
+      "source": "src_http_middleware_size_limit_ts",
+      "target": "size_limit_sizelimit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "src_http_middleware_error_ts",
+      "_tgt": "error_createerrorhandler",
+      "source": "src_http_middleware_error_ts",
+      "target": "error_createerrorhandler",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_src": "src_http_middleware_error_ts",
+      "_tgt": "error_buildenvelope",
+      "source": "src_http_middleware_error_ts",
+      "target": "error_buildenvelope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "src_http_middleware_error_ts",
+      "_tgt": "error_getrequestid",
+      "source": "src_http_middleware_error_ts",
+      "target": "error_getrequestid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/middleware/error.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_src": "src_http_middleware_error_ts",
+      "_tgt": "error_serializeerror",
+      "source": "src_http_middleware_error_ts",
+      "target": "error_serializeerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/health.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "src_http_routes_health_ts",
+      "_tgt": "health_createhealthroute",
+      "source": "src_http_routes_health_ts",
+      "target": "health_createhealthroute",
+      "confidence_score": 1.0
+    },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
@@ -129,8 +1302,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_self_hostable_image_understanding_api",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_self_hostable_image_understanding_api",
       "source": "README_retina",
       "target": "README_self_hostable_image_understanding_api"
     },
@@ -141,8 +1314,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_bring_your_own_llm_keys",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_bring_your_own_llm_keys",
       "source": "README_retina",
       "target": "README_bring_your_own_llm_keys"
     },
@@ -153,8 +1326,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_bedrock_endpoint",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_bedrock_endpoint",
       "source": "README_retina",
       "target": "README_bedrock_endpoint"
     },
@@ -165,8 +1338,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_sensing_layer_for_your_app",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_sensing_layer_for_your_app",
       "source": "README_retina",
       "target": "README_sensing_layer_for_your_app"
     },
@@ -177,8 +1350,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_image_to_text_api",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_image_to_text_api",
       "source": "README_retina",
       "target": "README_image_to_text_api"
     },
@@ -189,8 +1362,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_drop_in_api_service",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_drop_in_api_service",
       "source": "README_retina",
       "target": "README_drop_in_api_service"
     },
@@ -201,8 +1374,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_image_understanding",
-      "_tgt": "README_retina",
+      "_src": "README_retina",
+      "_tgt": "README_image_understanding",
       "source": "README_retina",
       "target": "README_image_understanding"
     },
@@ -213,8 +1386,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "README_your_own_vpc",
-      "_tgt": "README_image_to_text_api",
+      "_src": "README_image_to_text_api",
+      "_tgt": "README_your_own_vpc",
       "source": "README_image_to_text_api",
       "target": "README_your_own_vpc"
     }
