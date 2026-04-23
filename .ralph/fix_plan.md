@@ -1,312 +1,104 @@
 # Ralph Fix Plan
 
-> Last planned: 2026-04-22T00:03:56Z
+> Last planned: 2026-04-23
 > Source: docs/superpowers/specs/2026-04-21-retina-image-api-design.md
+> Format: FLAT — every `- [ ]` is an atomic, independently-executable unit (one
+> file or one cohesive change per task). No nesting. Parallel ralph loops claim
+> one leaf each via `pick_next_task` (flock on `fix_plan.md`), so lines must
+> stay top-level to avoid duplicate picks.
 
-Task IDs are stable — never renumber. Each top-level task is sized for a single
-ralph loop (~10–15 min of autonomous work) and should leave the repo in a
-working state (lint + typecheck + existing tests green).
+Task IDs are stable — never renumber. Letter suffix (R02a, R02b, …) preserves
+the original group while making each leaf individually claimable.
+Each task line is self-contained: paths + acceptance + deps inline, so a loop
+can execute without reading any other task.
 
 ## High Priority
 
-- [ ] **R02** Hono app skeleton + RetinaError hierarchy + core middleware + /healthz stub + logger
-  - [ ] Create `src/core/errors.ts` with `RetinaError` base (`code`, `status`, `cause`, `details`) plus all 10 subclasses from spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`)
-  - [ ] Create `src/logger.ts` exporting a pino JSON logger writing to stdout, level from parameter (wired to config in R13)
-  - [x] Create `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
-  - [ ] Create `src/http/middleware/size-limit.ts` — reject when `Content-Length > MAX_IMAGE_BYTES` with `ImageTooLargeError` before buffering
-  - [ ] Create `src/http/middleware/error.ts` — catch `RetinaError` → envelope `{error: {code, message, requestId, details}}` with `status`; catch unknown → `InternalError` 500 with stack logged
-  - [ ] Create `src/http/routes/health.ts` — `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 adds real redis probe)
-  - [x] Create `src/app.ts` exporting `buildApp(deps)` that composes middleware in order (request-id → size-limit → routes → error) and mounts `/healthz`
-  - [ ] Vitest unit tests: every error class carries correct `code` and `status`, each middleware behavior, healthz shape, envelope shape on thrown RetinaError subclasses
-  - [ ] Acceptance: `pnpm test:unit` passes; thrown `ValidationError` yields 400 JSON envelope with `x-request-id` header echoed
-  - [ ] Depends on: R01
-
-- [ ] **R03** Config loader with Zod (src/config.ts)
-  - [ ] Define a Zod schema covering every env var in spec §Configuration (PORT, LOG_LEVEL, REDIS_URL, MAX_IMAGE_BYTES, PROVIDERS, DEFAULT_PROVIDER, DEFAULT_MODEL, FALLBACK_CHAIN, RETRY_ATTEMPTS, RETRY_BACKOFF_MS, AWS_REGION, AWS_ACCESS_KEY_ID/SECRET, OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, TEMPLATES_DIR, JOB_RESULT_TTL_SECONDS, JOB_MAX_ATTEMPTS, WORKER_CONCURRENCY, REQUEST_TIMEOUT_MS, SSE_HEARTBEAT_MS)
-  - [ ] Apply defaults per spec (e.g. PORT=8080, MAX_IMAGE_BYTES=10485760, RETRY_ATTEMPTS=0, WORKER_CONCURRENCY=2)
-  - [ ] Refinements: `DEFAULT_PROVIDER ∈ PROVIDERS`; `FALLBACK_CHAIN ⊆ PROVIDERS`; provider-key gating (if `bedrock` in PROVIDERS → AWS_REGION required; if `openai` → OPENAI_API_KEY; if `anthropic` → ANTHROPIC_API_KEY; if `google` → GOOGLE_GENERATIVE_AI_API_KEY); `JOB_MAX_ATTEMPTS >= 1`
-  - [ ] Export `type Config` and `loadConfig(env = process.env): Config` throwing `ValidationError` with field paths on failure
-  - [ ] Vitest unit tests: valid minimal config, missing REDIS_URL, missing PROVIDERS, DEFAULT_PROVIDER not in PROVIDERS, FALLBACK_CHAIN contains unlisted provider, missing OPENAI_API_KEY when openai listed, defaults populated when optional vars absent
-  - [ ] Acceptance: `pnpm test:unit` covers 7+ config scenarios
-  - [ ] Depends on: R01, R02
-
-- [ ] **R04** Shared Zod request/response schemas (src/http/schemas.ts)
-  - [ ] Export `ImageInput` as a Zod discriminated union of `{url: string}` and `{base64: string, mime: "image/png"|"image/jpeg"|"image/webp"|"image/gif"}`
-  - [ ] Export `ProviderOptions` (`provider?`, `model?`, `fallback?: string[]`, `retries?: number`)
-  - [ ] Export request schemas: `DescribeRequest`, `OCRRequest`, `ExtractRequest` (XOR `schema` vs `templateId` via `.superRefine`), `AnalyzeRequest` (Zod discriminated union on `task`), `JobsRequest` (same as analyze + optional `callbackUrl`)
-  - [ ] Export matching response TS types
-  - [ ] Vitest unit tests: one valid + one invalid shape per request schema, and XOR verification for `ExtractRequest`
-  - [ ] Acceptance: all schemas referenced by route task imports compile with `strict` TS
-  - [ ] Depends on: R01
-
-- [ ] **R05** Image normalizer (src/core/image.ts)
-  - [ ] Export `normalize(input, opts): Promise<{bytes: Uint8Array, mime: string}>` accepting URL, base64, or already-parsed multipart `{bytes, mime}`
-  - [ ] URL path: `undici` `fetch` wrapped in `AbortSignal.timeout(10_000)`, stream body and abort once byte count exceeds `opts.maxBytes`, verify response `Content-Type` starts with `image/`
-  - [ ] Base64 path: decode to Buffer, sniff magic bytes (PNG/JPEG/WEBP/GIF), throw `UnsupportedMediaTypeError` if declared mime does not match sniffed mime
-  - [ ] Multipart path: validate `bytes.byteLength <= opts.maxBytes`, pass mime through
-  - [ ] Throws `ImageFetchError` (URL 4xx/5xx/timeout), `ImageTooLargeError` (size cap), `UnsupportedMediaTypeError` (mime mismatch or non-image)
-  - [ ] Vitest unit tests (using `undici` MockAgent): URL happy path, URL timeout, URL content-type image/jpeg happy, URL content-type text/html rejected, URL streaming cap aborts early; base64 happy, base64 mime mismatch; multipart happy, multipart too large
-  - [ ] Acceptance: `pnpm test:unit` covers 9+ cases for `normalize()`
-  - [ ] Depends on: R02, R04
-
-- [ ] **R06** ProviderRouter + provider factory + OpenAI provider (first end-to-end)
-  - [ ] Define `Provider` interface in `src/core/providers/index.ts` with methods `describe`, `ocr`, `extract` taking `{bytes, mime, prompt?, schema?, languages?}` and returning `{output, usage: {inputTokens, outputTokens}, model}`
-  - [ ] Export `createProvider(config, name: string): Provider` factory keyed by `PROVIDERS` values
-  - [ ] Create `src/core/providers/openai.ts` implementing `Provider` using `@ai-sdk/openai` (reads OPENAI_API_KEY, sensible default model constant flagged `TODO(spec-open-q): verify default model at implementation time`)
-  - [ ] Create `src/core/provider-router.ts` with class `ProviderRouter(config, factory)` exposing `call(task, input, opts): Promise<{output, usage, provider, model}>`
-  - [ ] Resolve primary provider: `opts.provider ?? config.DEFAULT_PROVIDER`
-  - [ ] Resolve retries: `opts.retries ?? config.RETRY_ATTEMPTS`; resolve fallback chain: `opts.fallback ?? config.FALLBACK_CHAIN ?? []` (request-level **replaces** env, does not merge)
-  - [ ] Attempt primary with exponential backoff (base `RETRY_BACKOFF_MS`); on exhaustion, iterate fallback chain in order, each with its own retry budget; collect `{provider, model, code, message}` per attempt
-  - [ ] On total failure throw `ProviderFailedError` with `details.attempts`; forward `AbortSignal` into each ai-sdk call
-  - [ ] Vitest unit tests with mocked provider: happy path, retry-then-succeed, exhaust-retries-no-fallback, fallback-succeeds-on-second, fallback-exhaustion populates attempts, request-level `retries:0` replaces env `RETRY_ATTEMPTS=3`, AbortSignal propagation
-  - [ ] Acceptance: 7+ router unit tests pass
-  - [ ] Depends on: R02, R03
-
-- [ ] **R07** Add Bedrock, Anthropic, Google providers
-  - [ ] Create `src/core/providers/bedrock.ts` using `@ai-sdk/amazon-bedrock` (reads AWS_REGION; falls through to the default AWS credential chain so IAM roles work in prod; optional explicit access key)
-  - [ ] Create `src/core/providers/anthropic.ts` using `@ai-sdk/anthropic` (reads ANTHROPIC_API_KEY)
-  - [ ] Create `src/core/providers/google.ts` using `@ai-sdk/google` (reads GOOGLE_GENERATIVE_AI_API_KEY)
-  - [ ] Register all three in the factory so `createProvider(config, name)` handles `bedrock|openai|anthropic|google`
-  - [ ] Declare default model ID constants per provider (flag `TODO(spec-open-q): verify against current vision-capable SKUs at implementation time`)
-  - [ ] Vitest unit tests: factory instantiates each provider with mocked env; missing required env throws `ValidationError` with field path
-  - [ ] Acceptance: `createProvider(config, "bedrock" | "anthropic" | "google")` each return a Provider compatible with R06 interface
-  - [ ] Depends on: R06
-
-- [ ] **R08** Describe task + POST /v1/describe
-  - [ ] Create `src/core/tasks/describe.ts` exposing `runDescribe(router, opts): Promise<DescribeResult>` that builds the provider call from `{bytes, mime, prompt?, maxTokens?}`
-  - [ ] Create `src/http/routes/describe.ts` that Zod-validates body (R04), normalizes image (R05), calls router (R06), shapes response `{description, provider, model, usage}`
-  - [ ] Wire route into `buildApp()` via a registrar function
-  - [ ] Wrap the handler in `AbortSignal.timeout(REQUEST_TIMEOUT_MS)` and map abort to `ProviderTimeoutError`
-  - [ ] Vitest unit tests with mocked router: 200 happy path, 400 on malformed body, 413 on oversized image, 502 on `ProviderFailedError` with attempts in envelope
-  - [ ] Acceptance: `POST /v1/describe` end-to-end unit test passes with mocked router + mocked undici (image URL fetch)
-  - [ ] Depends on: R02, R04, R05, R06
-
-- [ ] **R09** OCR task + POST /v1/ocr
-  - [ ] Create `src/core/tasks/ocr.ts` exposing `runOcr(router, opts): Promise<OcrResult>` that prompts provider for full text with optional `languages: string[]` hint
-  - [ ] Response shape `{text, blocks: [{text, bbox: null}], provider, model, usage}` — per spec `bbox` is always `null` in MVP
-  - [ ] Create `src/http/routes/ocr.ts` wiring validation → normalize → router → response shape
-  - [ ] Vitest unit tests: happy path with mocked provider, `languages` hint forwarded into provider prompt, empty-text response handled, 413 on oversize
-  - [ ] Acceptance: blocks contract verified: `result.blocks.every(b => b.bbox === null)`
-  - [ ] Depends on: R02, R04, R05, R06
-
-- [ ] **R10** Template filesystem loader (src/core/templates.ts)
-  - [ ] Export `loadTemplates(dir: string): TemplateRegistry` that reads `*.json` files from `TEMPLATES_DIR`
-  - [ ] Each template file must match Zod schema `{id: string, version: string, description: string, schema: JsonSchema}` — malformed file aborts startup
-  - [ ] Registry exposes `.get(id)` (throws `TemplateNotFoundError` on miss) and `.list()` (returns all templates)
-  - [ ] Vitest unit tests using a temp dir: valid directory loads, invalid-JSON fails boot, schema-mismatch fails boot, unknown id throws, empty dir returns empty registry
-  - [ ] Acceptance: `loadTemplates(path)` used at boot and by the extract route + templates routes
-  - [ ] Depends on: R02, R03
-
-- [ ] **R11** Extract task + POST /v1/extract (ad-hoc schema + template)
-  - [ ] Create `src/core/tasks/extract.ts` exposing `runExtract(router, registry, opts)` that resolves JsonSchema from `opts.schema` OR `registry.get(opts.templateId).schema`, then calls provider in structured-output mode
-  - [ ] Create `src/http/routes/extract.ts` Zod-validating XOR `schema` vs `templateId` (R04) and dispatching
-  - [ ] Response: `{data, templateId: string | null, provider, model, usage}` (templateId populated when template path, null for ad-hoc)
-  - [ ] Vitest unit tests: ad-hoc schema path, template path, unknown templateId → 404 `template_not_found`, neither schema nor templateId → 400 `invalid_request`, both set → 400
-  - [ ] Acceptance: 5+ unit tests covering all extract branches
-  - [ ] Depends on: R04, R05, R06, R10
-
-- [ ] **R12** GET /v1/templates endpoints + POST /v1/analyze unified
-  - [ ] Create `src/http/routes/templates.ts` mounting `GET /v1/templates` (returns `[{id, version, description}]`) and `GET /v1/templates/:id` (returns `{id, version, schema, description}` or 404)
-  - [ ] Create `src/http/routes/analyze.ts` mounting `POST /v1/analyze` with Zod discriminated union on `task`, dispatching to `runDescribe`/`runOcr`/`runExtract`, response `{task, result}`
-  - [ ] Wire both registrars into `buildApp()`
-  - [ ] Vitest unit tests: templates list + detail + 404, analyze happy path for each task branch with mocked deps
-  - [ ] Acceptance: 6+ unit tests covering templates and analyze routes
-  - [ ] Depends on: R08, R09, R10, R11
-
-- [ ] **R13** Bootstrap src/index.ts + @hono/node-server
-  - [ ] `src/index.ts`: `loadConfig()` → `buildLogger(level)` → `createProvider` factory → `ProviderRouter` → `loadTemplates` → `buildApp({config, logger, router, templates})` → `serve({fetch: app.fetch, port: config.PORT})` via `@hono/node-server`
-  - [ ] Startup banner logs a redacted config summary (redact AWS_*/OPENAI_API_KEY/ANTHROPIC_API_KEY/GOOGLE_*) at `info`
-  - [ ] Config parse failure logs the Zod error and exits non-zero
-  - [ ] `pnpm dev` runs via `tsx watch src/index.ts`; `pnpm build` emits `dist/` via `tsc`
-  - [ ] Vitest integration-style test: build app with stub deps, call `app.fetch` for `/healthz`, assert 200 + JSON body
-  - [ ] Acceptance: `PORT=8080 REDIS_URL=redis://localhost:6379/0 PROVIDERS=openai DEFAULT_PROVIDER=openai OPENAI_API_KEY=... pnpm dev` boots and `curl localhost:8080/healthz` returns 200
-  - [ ] Depends on: R02, R03, R06
+- [ ] **R02a** Create `src/core/errors.ts`: export `RetinaError` base (`code`, `status`, `cause`, `details`) plus 11 subclasses per spec §Error handling (`ValidationError`, `ImageTooLargeError`, `UnsupportedMediaTypeError`, `ImageFetchError`, `TemplateNotFoundError`, `JobNotFoundError`, `ProviderFailedError`, `ProviderTimeoutError`, `ProviderRateLimitError`, `RedisUnavailableError`, `InternalError`). Vitest in `test/unit/errors.spec.ts`: each class carries correct `code` + HTTP `status`. Depends on: R01.
+- [ ] **R02b** Create `src/logger.ts`: export `buildLogger(level)` returning a pino JSON logger writing to stdout. `level` is a parameter (wired to config in R13). Vitest in `test/unit/logger.spec.ts`: respects level, JSON output. Depends on: R01.
+- [ ] **R02d** Create `src/http/middleware/size-limit.ts`: Hono middleware rejecting requests when `Content-Length > MAX_IMAGE_BYTES` (config via Hono context) with `ImageTooLargeError` BEFORE buffering. Vitest in `test/unit/middleware-size-limit.spec.ts`: over-limit throws, under-limit passes. Depends on: R02a.
+- [ ] **R02e** Create `src/http/middleware/error.ts`: Hono error middleware catching `RetinaError` → JSON envelope `{error: {code, message, requestId, details}}` with correct `status`; unknown error → `InternalError` 500 with stack logged. Echo `x-request-id` header on response. Vitest in `test/unit/middleware-error.spec.ts`: envelope shape for each RetinaError subclass + unknown. Depends on: R02a, R02c.
+- [ ] **R02f** Create `src/http/routes/health.ts`: `GET /healthz` returns `{ok: true, redis: "down", providers: {}}` (stub; R14 upgrades redis probe). Vitest in `test/unit/route-health.spec.ts`: 200 + shape. Depends on: R02a.
+- [ ] **R02h** Verify full R02 composition: run `pnpm test:unit` across R02a-R02g; integration-style test in `test/unit/app-compose.spec.ts` that thrown `ValidationError` inside a route yields 400 JSON envelope with `x-request-id` echoed. Depends on: R02a, R02b, R02c, R02d, R02e, R02f, R02g.
+- [ ] **R03** Create `src/config.ts` with Zod schema covering every env var in spec §Configuration (PORT, LOG_LEVEL, REDIS_URL, MAX_IMAGE_BYTES, PROVIDERS, DEFAULT_PROVIDER, DEFAULT_MODEL, FALLBACK_CHAIN, RETRY_ATTEMPTS, RETRY_BACKOFF_MS, AWS_REGION, AWS_ACCESS_KEY_ID/SECRET, OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, TEMPLATES_DIR, JOB_RESULT_TTL_SECONDS, JOB_MAX_ATTEMPTS, WORKER_CONCURRENCY, REQUEST_TIMEOUT_MS, SSE_HEARTBEAT_MS). Defaults: PORT=8080, MAX_IMAGE_BYTES=10485760, RETRY_ATTEMPTS=0, WORKER_CONCURRENCY=2, JOB_RESULT_TTL_SECONDS=86400, JOB_MAX_ATTEMPTS=3, REQUEST_TIMEOUT_MS=30000, SSE_HEARTBEAT_MS=15000. Refinements: `DEFAULT_PROVIDER ∈ PROVIDERS`; `FALLBACK_CHAIN ⊆ PROVIDERS`; `bedrock ∈ PROVIDERS ⇒ AWS_REGION`; `openai ⇒ OPENAI_API_KEY`; `anthropic ⇒ ANTHROPIC_API_KEY`; `google ⇒ GOOGLE_GENERATIVE_AI_API_KEY`; `JOB_MAX_ATTEMPTS >= 1`. Export `type Config` + `loadConfig(env = process.env): Config` throwing `ValidationError` with field paths. Vitest in `test/unit/config.spec.ts`: 7+ scenarios (valid minimal, missing REDIS_URL, missing PROVIDERS, DEFAULT_PROVIDER not in PROVIDERS, FALLBACK_CHAIN stray, missing OPENAI_API_KEY when openai listed, defaults applied). Depends on: R01, R02a.
+- [ ] **R04** Create `src/http/schemas.ts` exporting shared Zod request/response shapes: `ImageInput` (discriminated union `{url}` vs `{base64, mime: "image/png"|"image/jpeg"|"image/webp"|"image/gif"}`), `ProviderOptions` (`provider?`, `model?`, `fallback?: string[]`, `retries?: number`), `DescribeRequest`, `OCRRequest`, `ExtractRequest` (XOR `schema` vs `templateId` via `.superRefine`), `AnalyzeRequest` (discriminated union on `task`), `JobsRequest` (= analyze + optional `callbackUrl`). Export matching TS response types. Vitest in `test/unit/schemas.spec.ts`: 1 valid + 1 invalid per request schema + XOR verification for ExtractRequest. Depends on: R01.
+- [ ] **R05** Create `src/core/image.ts` exporting `normalize(input, opts): Promise<{bytes: Uint8Array, mime: string}>`. URL path: `undici` `fetch` wrapped in `AbortSignal.timeout(10_000)`, stream body and abort once byte count > `opts.maxBytes`, verify `Content-Type` starts with `image/`. Base64 path: decode to Buffer, sniff PNG/JPEG/WEBP/GIF magic bytes, throw `UnsupportedMediaTypeError` on mime mismatch. Multipart path: validate `bytes.byteLength <= opts.maxBytes`, pass mime through. Throws `ImageFetchError` (URL 4xx/5xx/timeout), `ImageTooLargeError`, `UnsupportedMediaTypeError`. Vitest in `test/unit/image.spec.ts` using `undici` MockAgent: 9+ cases (URL happy, URL timeout, URL image/jpeg happy, URL text/html rejected, URL streaming cap aborts early, base64 happy, base64 mime mismatch, multipart happy, multipart too large). Depends on: R02a, R04.
+- [ ] **R06a** Create `src/core/providers/index.ts`: define `Provider` interface with methods `describe`, `ocr`, `extract` taking `{bytes, mime, prompt?, schema?, languages?, signal?}` and returning `{output, usage: {inputTokens, outputTokens}, model}`. Export `createProvider(config, name: string): Provider` factory keyed by `PROVIDERS` values (initially throws for unknown names; concrete providers register via R06b/R07*). Vitest in `test/unit/providers-factory.spec.ts`: unknown name throws `ValidationError`. Depends on: R02a, R03.
+- [ ] **R06b** Create `src/core/providers/openai.ts` implementing `Provider` from R06a using `@ai-sdk/openai` (reads OPENAI_API_KEY). Declare default model ID constant with `TODO(spec-open-q): verify vision-capable SKU`. Register in R06a's factory. Vitest in `test/unit/provider-openai.spec.ts` with mocked ai-sdk: describe/ocr/extract return shape, missing OPENAI_API_KEY throws. Depends on: R06a.
+- [ ] **R06c** Create `src/core/provider-router.ts` with class `ProviderRouter(config, factory)` exposing `call(task, input, opts): Promise<{output, usage, provider, model}>`. Resolve primary = `opts.provider ?? config.DEFAULT_PROVIDER`; retries = `opts.retries ?? config.RETRY_ATTEMPTS`; fallback = `opts.fallback ?? config.FALLBACK_CHAIN ?? []` (request-level REPLACES env, does not merge). Attempt primary with exponential backoff (base `RETRY_BACKOFF_MS`); on exhaustion iterate fallback chain in order, each with its own retry budget; collect `{provider, model, code, message}` per attempt. On total failure throw `ProviderFailedError` with `details.attempts`. Forward `AbortSignal` into each ai-sdk call. Vitest in `test/unit/provider-router.spec.ts` with mocked provider: 7+ cases (happy, retry-then-succeed, exhaust-retries-no-fallback, fallback-succeeds-on-second, fallback-exhaustion attempts populated, request `retries:0` replaces env, AbortSignal propagation). Depends on: R06a.
+- [ ] **R07a** Create `src/core/providers/bedrock.ts` implementing `Provider` from R06a using `@ai-sdk/amazon-bedrock` (reads AWS_REGION; default AWS credential chain so IAM roles work in prod; optional explicit access keys). Declare default model ID constant with `TODO(spec-open-q)`. Register in R06a's factory. Vitest in `test/unit/provider-bedrock.spec.ts` with mocked env: factory instantiates; missing AWS_REGION throws. Depends on: R06a.
+- [ ] **R07b** Create `src/core/providers/anthropic.ts` implementing `Provider` from R06a using `@ai-sdk/anthropic` (reads ANTHROPIC_API_KEY). Declare default model ID constant with `TODO(spec-open-q)`. Register in R06a's factory. Vitest in `test/unit/provider-anthropic.spec.ts` with mocked env: factory instantiates; missing ANTHROPIC_API_KEY throws. Depends on: R06a.
+- [ ] **R07c** Create `src/core/providers/google.ts` implementing `Provider` from R06a using `@ai-sdk/google` (reads GOOGLE_GENERATIVE_AI_API_KEY). Declare default model ID constant with `TODO(spec-open-q)`. Register in R06a's factory. Vitest in `test/unit/provider-google.spec.ts` with mocked env: factory instantiates; missing GOOGLE_GENERATIVE_AI_API_KEY throws. Depends on: R06a.
+- [ ] **R08** Create `src/core/tasks/describe.ts` exposing `runDescribe(router, opts): Promise<DescribeResult>` that builds provider call from `{bytes, mime, prompt?, maxTokens?}`. Create `src/http/routes/describe.ts` that Zod-validates body (R04), normalizes image (R05), calls router (R06c), shapes response `{description, provider, model, usage}`. Wrap handler in `AbortSignal.timeout(REQUEST_TIMEOUT_MS)` mapping abort to `ProviderTimeoutError`. Wire into `buildApp()` via registrar. Vitest in `test/unit/route-describe.spec.ts` with mocked router + undici MockAgent: 200 happy, 400 malformed body, 413 oversized, 502 on `ProviderFailedError` with attempts in envelope. Depends on: R02e, R02g, R04, R05, R06c.
+- [ ] **R09** Create `src/core/tasks/ocr.ts` exposing `runOcr(router, opts): Promise<OcrResult>` that prompts provider for full text with optional `languages: string[]` hint. Response shape `{text, blocks: [{text, bbox: null}], provider, model, usage}` — `bbox` is ALWAYS `null` in MVP. Create `src/http/routes/ocr.ts` wiring validation → normalize → router → response shape. Wire into `buildApp()`. Vitest in `test/unit/route-ocr.spec.ts`: happy, languages forwarded into prompt, empty-text handled, 413 oversize, assertion `result.blocks.every(b => b.bbox === null)`. Depends on: R02e, R04, R05, R06c.
+- [ ] **R10** Create `src/core/templates.ts` exporting `loadTemplates(dir: string): TemplateRegistry` that reads `*.json` from `TEMPLATES_DIR`. Each file must match Zod `{id: string, version: string, description: string, schema: JsonSchema}` — malformed file aborts startup. Registry exposes `.get(id)` (throws `TemplateNotFoundError` on miss) + `.list()`. Vitest in `test/unit/templates.spec.ts` with temp dir: valid loads, invalid-JSON fails boot, schema-mismatch fails boot, unknown id throws, empty dir → empty registry. Depends on: R02a, R03.
+- [ ] **R11** Create `src/core/tasks/extract.ts` exposing `runExtract(router, registry, opts)` that resolves JsonSchema from `opts.schema` OR `registry.get(opts.templateId).schema`, then calls provider in structured-output mode. Create `src/http/routes/extract.ts` Zod-validating XOR `schema` vs `templateId` (R04) and dispatching. Response `{data, templateId: string | null, provider, model, usage}`. Wire into `buildApp()`. Vitest in `test/unit/route-extract.spec.ts`: 5+ cases (ad-hoc schema path, template path, unknown templateId → 404 `template_not_found`, neither → 400 `invalid_request`, both set → 400). Depends on: R04, R05, R06c, R10.
+- [ ] **R12a** Create `src/http/routes/templates.ts` mounting `GET /v1/templates` returning `[{id, version, description}]` and `GET /v1/templates/:id` returning `{id, version, schema, description}` or 404 `template_not_found`. Wire into `buildApp()`. Vitest in `test/unit/route-templates.spec.ts`: list, detail, 404. Depends on: R10.
+- [ ] **R12b** Create `src/http/routes/analyze.ts` mounting `POST /v1/analyze` with Zod discriminated union on `task`, dispatching to `runDescribe`/`runOcr`/`runExtract`, response `{task, result}`. Wire into `buildApp()`. Vitest in `test/unit/route-analyze.spec.ts`: happy path for each of describe/ocr/extract branches with mocked deps. Depends on: R08, R09, R11.
+- [ ] **R13** Replace stub `src/index.ts`: `loadConfig()` → `buildLogger(level)` → build `createProvider` factory → `ProviderRouter` → `loadTemplates` → `buildApp({config, logger, router, templates, store?})` → `serve({fetch: app.fetch, port: config.PORT})` via `@hono/node-server`. Startup banner logs redacted config summary (redact AWS_*/OPENAI_API_KEY/ANTHROPIC_API_KEY/GOOGLE_*) at `info`. Config parse failure logs Zod error + exits non-zero. `pnpm dev` runs `tsx watch src/index.ts`; `pnpm build` emits `dist/` via `tsc`. Vitest integration in `test/unit/bootstrap.spec.ts`: build app with stub deps, `app.fetch('/healthz')` → 200 + JSON. Acceptance: `PORT=8080 REDIS_URL=redis://localhost:6379/0 PROVIDERS=openai DEFAULT_PROVIDER=openai OPENAI_API_KEY=... pnpm dev` boots; `curl localhost:8080/healthz` → 200. Depends on: R02g, R02h, R03, R06c.
 
 ## Medium Priority
 
-- [ ] **R14** Redis client + JobStore (src/jobs/store.ts)
-  - [ ] Create `src/jobs/store.ts` with `JobStore(redis: IORedis)` wrapping the ioredis client
-  - [ ] Keys per spec: `retina:job:<id>` (hash or JSON string), `retina:queue` (list), `retina:processing` (list), pub/sub channel `retina:job:<id>`
-  - [ ] Methods: `enqueue(job)` (SET + LPUSH), `claim(blockSec)` (BRPOPLPUSH retina:queue retina:processing), `get(id)`, `update(id, patch)`, `complete(id, result, ttl)` (writes result + status + completedAt with `JOB_RESULT_TTL_SECONDS` TTL), `fail(id, error)`, `remove(id)` (LREM retina:processing), `publish(id, event)`, `subscribe(id, handler)` (uses a separate subscriber connection per ioredis best practice)
-  - [ ] Update `/healthz` to report `redis: "up"|"down"` from `redis.status`
-  - [ ] Vitest unit tests using `ioredis-mock` (or a testcontainer Redis): enqueue → claim → update → complete happy path; TTL applied; remove clears processing list; publish/subscribe delivers events
-  - [ ] Acceptance: `pnpm test:unit` covers JobStore happy paths; healthz shows `redis: "up"` when client connected
-  - [ ] Depends on: R02, R03
-
-- [ ] **R15** Worker loop (src/jobs/worker.ts)
-  - [ ] Create `src/jobs/worker.ts` exposing `startWorkers({config, store, router, tasks, logger})` that spawns `WORKER_CONCURRENCY` coroutines
-  - [ ] Each coroutine loops: `claim()` (blocking BRPOPLPUSH), update `status: "running"` + bump `attempts`, publish `status:running`, dispatch to `tasks.describe|ocr|extract` based on job payload, on success `complete()` + publish `completed`, on failure either requeue with exponential backoff (if `attempts < JOB_MAX_ATTEMPTS`) or `fail()` + publish `failed`
-  - [ ] Terminal state removes id from `retina:processing` via `LREM`
-  - [ ] Return `{shutdown(): Promise<void>}` handle that stops claiming new jobs and waits for in-flight to drain
-  - [ ] Vitest unit tests with mocked JobStore + mocked task runners: success, retry-then-succeed, exhaustion-fails, publish event ordering, LREM on terminal state, shutdown drains in-flight
-  - [ ] Acceptance: 6+ worker unit tests pass; async `describe` job goes queued→running→completed with published events
-  - [ ] Depends on: R06, R14 (reuses task modules from R08/R09/R11)
-
-- [ ] **R16** Callback webhook dispatcher (src/jobs/callback.ts)
-  - [ ] Create `src/jobs/callback.ts` exporting `postCallback(url, payload, {retries: 3, timeoutMs: 5000, backoffMs: 250})` doing fire-and-forget POST via `undici.fetch`
-  - [ ] Each attempt uses `AbortSignal.timeout(timeoutMs)`; exponential backoff between retries; final giveup logs at `warn`
-  - [ ] Invoked from R15 worker only on successful `complete` (per spec §Data flow Async step 4); callback failure does NOT mutate job state
-  - [ ] Vitest unit tests (undici MockAgent): first-try success, retry-then-success on 500, timeout treated as failure, giveup after 3 retries
-  - [ ] Acceptance: worker logs `callback_ok` on success and `callback_giveup` on exhaustion without failing the job
-  - [ ] Depends on: R15
-
-- [ ] **R17** Jobs enqueue + get endpoints (src/http/routes/jobs.ts)
-  - [ ] Create `src/http/routes/jobs.ts` mounting `POST /v1/jobs` and `GET /v1/jobs/:id`
-  - [ ] POST: validate body via R04 `JobsRequest` (same shape as sync + optional `callbackUrl: string`), normalize image (R05), JobStore.enqueue, respond HTTP 202 `{jobId, status: "queued"}`
-  - [ ] GET: JobStore.get, return `{jobId, status, attempts, createdAt, completedAt, result, error}`; throw `JobNotFoundError` → 404 on miss
-  - [ ] Wire registrar into `buildApp()`; index.ts passes JobStore into deps
-  - [ ] Vitest unit tests: enqueue shape + Redis writes verified via mocked JobStore, GET returns each status, GET unknown id → 404
-  - [ ] Acceptance: `POST /v1/jobs` returns 202 JSON `{jobId, status: "queued"}`; Redis list `retina:queue` length increases by 1
-  - [ ] Depends on: R04, R05, R14
-
-- [ ] **R18** SSE stream endpoint (src/jobs/sse.ts + jobs route)
-  - [ ] Create `src/jobs/sse.ts` exposing `streamJob(jobId, store): ReadableStream<Uint8Array>` that writes SSE headers, sends current state as the first event, subscribes to `retina:job:<id>` and forwards messages as `data:` events, emits heartbeat comment `: ping\n\n` every `SSE_HEARTBEAT_MS`
-  - [ ] Close stream on terminal event (`completed` or `failed`) or client disconnect (abort on `c.req.raw.signal`)
-  - [ ] Mount `GET /v1/jobs/:id/stream` in `src/http/routes/jobs.ts` wiring Hono's streaming response helper
-  - [ ] Event types (MVP): `status`, `completed`, `failed` (no `progress` — reserved for Phase 2)
-  - [ ] Vitest unit tests with fake timers + mocked JobStore: first event is current state, forwarded events, terminal close, heartbeat cadence, subscriber cleanup on disconnect
-  - [ ] Acceptance: `curl -N http://localhost:8080/v1/jobs/<id>/stream` receives current state immediately, then status/completed events, then closes
-  - [ ] Depends on: R14, R17
-
-- [ ] **R19** Replay test infrastructure + one describe fixture per provider
-  - [ ] Create `test/replay/setup.ts` wiring `undici` MockAgent as the global dispatcher during replay tests
-  - [ ] Record one fixture file per provider at `test/replay/fixtures/<provider>/describe-basic.json` (for bedrock, openai, anthropic, google) containing the captured HTTP exchange
-  - [ ] Create `test/replay/describe.spec.ts` that exercises `POST /v1/describe` across all four providers via replay
-  - [ ] Add `test/replay/record.ts` CLI (gated by `RECORD=1` + real creds) that regenerates fixtures by calling the real provider — documented in `test/replay/README.md`
-  - [ ] Add a `pnpm test:replay` vitest project scoped to `test/replay/**`
-  - [ ] Acceptance: `pnpm test:replay` passes and exercises all four providers against fixtures
-  - [ ] Depends on: R08
-
-- [ ] **R20** E2E test infrastructure + jobs lifecycle test
-  - [ ] Create `test/e2e/setup.ts` as vitest globalSetup: start Hono via `@hono/node-server` on a random free port, start Redis via `@testcontainers/redis`, export base URL + REDIS_URL for tests
-  - [ ] Create `test/e2e/jobs-lifecycle.spec.ts`: POST /v1/jobs (provider stubbed via undici MockAgent) → poll GET /v1/jobs/:id through queued→running→completed → open SSE in parallel and assert event sequence → stand up an in-test HTTP echo server and assert the callback POST arrives with the result → assert Redis TTL on the completed result key
-  - [ ] Add a `pnpm test:e2e` vitest project scoped to `test/e2e/**`
-  - [ ] Acceptance: `pnpm test:e2e` passes using a testcontainer Redis with the full async lifecycle exercised
-  - [ ] Depends on: R13, R15, R16, R17, R18
-
-- [ ] **R21** Live integration test scaffold (test/live/)
-  - [ ] Create `test/live/setup.ts` mirroring e2e setup but WITHOUT MockAgent (real provider HTTP)
-  - [ ] Create one smoke test per provider under `test/live/<provider>-describe.spec.ts` that sends a real describe request against a small public image
-  - [ ] Each test uses `describe.skipIf(!process.env.INTEGRATION || !process.env.<PROVIDER_KEY>)` so missing creds skip rather than fail
-  - [ ] Add a `pnpm test:live` vitest project scoped to `test/live/**`
-  - [ ] Acceptance: `INTEGRATION=1 OPENAI_API_KEY=... pnpm test:live` exercises at least the OpenAI smoke test against the real API
-  - [ ] Depends on: R08, R20
-
-- [ ] **R22** Dockerfile (multi-stage Node 20 prod base, non-root)
-  - [ ] Stage 1 `builder`: `node:20-alpine`, `corepack enable`, copy manifests, `pnpm install --frozen-lockfile`, copy sources, `pnpm build` (emits dist)
-  - [ ] Stage 2 `runner`: `node:20-alpine`, copy `dist`, `package.json`, `pnpm-lock.yaml`, install prod deps with `pnpm install --prod --frozen-lockfile`, `USER node`, `EXPOSE 8080`, `HEALTHCHECK` curling `/healthz`, `CMD ["node", "dist/index.js"]`
-  - [ ] Create `.dockerignore` excluding `node_modules/`, `test/`, `.git/`, `.ralph/`, `docs/`, `graphify-out/`, `.github/`, `coverage/`
-  - [ ] Acceptance: `docker build -t retina:test .` succeeds; `docker run --rm -e REDIS_URL=... -e PROVIDERS=openai -e DEFAULT_PROVIDER=openai -e OPENAI_API_KEY=test retina:test` boots and `/healthz` responds
-  - [ ] Depends on: R13
-
-- [ ] **R23** docker-compose.test.yml for local e2e
-  - [ ] Create `docker-compose.test.yml` declaring a `redis:7-alpine` service on 6379 with a healthcheck (`redis-cli ping`)
-  - [ ] Add a README note showing `docker-compose -f docker-compose.test.yml up -d` + `REDIS_URL=redis://localhost:6379/0 pnpm test:e2e` as an alternative to testcontainers for local dev
-  - [ ] Acceptance: `docker-compose -f docker-compose.test.yml up -d` launches healthy Redis; `pnpm test:e2e` can be pointed at it by setting `REDIS_URL`
-  - [ ] Depends on: R22
+- [ ] **R14** Create `src/jobs/store.ts` with `JobStore(redis: IORedis)` wrapping ioredis. Keys: `retina:job:<id>` (hash or JSON), `retina:queue` (list), `retina:processing` (list), pub/sub channel `retina:job:<id>`. Methods: `enqueue(job)` (SET + LPUSH), `claim(blockSec)` (BRPOPLPUSH retina:queue retina:processing), `get(id)`, `update(id, patch)`, `complete(id, result, ttl)` (writes result + status + completedAt with `JOB_RESULT_TTL_SECONDS` TTL), `fail(id, error)`, `remove(id)` (LREM retina:processing), `publish(id, event)`, `subscribe(id, handler)` (separate subscriber connection per ioredis best practice). Upgrade `src/http/routes/health.ts` (R02f) to report `redis: "up"|"down"` from `redis.status`. Vitest in `test/unit/job-store.spec.ts` using `ioredis-mock`: enqueue → claim → update → complete happy path; TTL applied; remove clears processing; publish/subscribe delivers. Depends on: R02a, R02f, R03.
+- [ ] **R15** Create `src/jobs/worker.ts` exposing `startWorkers({config, store, router, tasks, logger})` that spawns `WORKER_CONCURRENCY` coroutines. Each: `claim()` (blocking BRPOPLPUSH), update `status: "running"` + bump `attempts`, publish `status:running`, dispatch to `tasks.describe|ocr|extract` by job payload, on success `complete()` + publish `completed`, on failure either requeue with exponential backoff (if `attempts < JOB_MAX_ATTEMPTS`) or `fail()` + publish `failed`. Terminal state removes id from `retina:processing` via `LREM`. Return `{shutdown(): Promise<void>}` handle that stops claiming + waits in-flight to drain. Vitest in `test/unit/worker.spec.ts` with mocked JobStore + task runners: 6+ cases (success, retry-then-succeed, exhaustion-fails, event order, LREM on terminal, shutdown drains). Depends on: R06c, R14 (reuses R08/R09/R11 task modules).
+- [ ] **R16** Create `src/jobs/callback.ts` exporting `postCallback(url, payload, {retries: 3, timeoutMs: 5000, backoffMs: 250})` — fire-and-forget POST via `undici.fetch`. Each attempt uses `AbortSignal.timeout(timeoutMs)`; exponential backoff between retries; final give-up logs at `warn`. Invoked from R15 worker only on successful `complete` (spec §Data flow Async step 4); callback failure does NOT mutate job state. Vitest in `test/unit/callback.spec.ts` with undici MockAgent: first-try success, retry-then-success on 500, timeout-as-failure, give-up after 3 retries. Worker logs `callback_ok` on success and `callback_giveup` on exhaustion without failing the job. Depends on: R15.
+- [ ] **R17** Create `src/http/routes/jobs.ts` mounting `POST /v1/jobs` and `GET /v1/jobs/:id`. POST: validate `JobsRequest` from R04 (= sync shape + optional `callbackUrl: string`), normalize image (R05), `JobStore.enqueue`, respond 202 `{jobId, status: "queued"}`. GET: `JobStore.get`, return `{jobId, status, attempts, createdAt, completedAt, result, error}`; miss throws `JobNotFoundError` → 404. Wire registrar into `buildApp()`; index.ts passes JobStore into deps. Vitest in `test/unit/route-jobs.spec.ts`: enqueue shape + Redis writes via mocked store, GET each status, GET unknown → 404. Acceptance: `POST /v1/jobs` returns 202 JSON; `retina:queue` length +1. Depends on: R04, R05, R14.
+- [ ] **R18** Create `src/jobs/sse.ts` exposing `streamJob(jobId, store): ReadableStream<Uint8Array>` that writes SSE headers, sends current state as first event, subscribes to `retina:job:<id>` and forwards messages as `data:` events, emits heartbeat comment `: ping\n\n` every `SSE_HEARTBEAT_MS`. Close on terminal event (`completed` or `failed`) or client disconnect (`c.req.raw.signal`). Mount `GET /v1/jobs/:id/stream` in `src/http/routes/jobs.ts` via Hono streaming helper. Event types MVP: `status`, `completed`, `failed` (no `progress` — reserved Phase 2). Vitest in `test/unit/sse.spec.ts` with fake timers + mocked store: first event is current state, forwarded events, terminal close, heartbeat cadence, subscriber cleanup on disconnect. Acceptance: `curl -N http://localhost:8080/v1/jobs/<id>/stream` receives current state immediately, then status/completed, then closes. Depends on: R14, R17.
+- [ ] **R19** Create `test/replay/setup.ts` wiring `undici` MockAgent as global dispatcher for replay tests. Record one fixture per provider at `test/replay/fixtures/<provider>/describe-basic.json` for bedrock, openai, anthropic, google (captured HTTP exchange). Create `test/replay/describe.spec.ts` exercising `POST /v1/describe` across all four providers via replay. Add `test/replay/record.ts` CLI (gated by `RECORD=1` + real creds) regenerating fixtures — documented in `test/replay/README.md`. Register `pnpm test:replay` vitest project scoped to `test/replay/**`. Acceptance: `pnpm test:replay` passes across all four providers against fixtures. Depends on: R08.
+- [ ] **R20** Create `test/e2e/setup.ts` as vitest globalSetup: start Hono via `@hono/node-server` on random free port, start Redis via `@testcontainers/redis`, export base URL + REDIS_URL. Create `test/e2e/jobs-lifecycle.spec.ts`: POST /v1/jobs (provider stubbed via undici MockAgent) → poll GET /v1/jobs/:id through queued→running→completed → open SSE in parallel and assert event sequence → stand up in-test HTTP echo server and assert callback POST arrives with result → assert Redis TTL on completed result key. Register `pnpm test:e2e` vitest project scoped to `test/e2e/**`. Acceptance: `pnpm test:e2e` passes with testcontainer Redis exercising full async lifecycle. Depends on: R13, R15, R16, R17, R18.
+- [ ] **R21** Create `test/live/setup.ts` mirroring e2e setup WITHOUT MockAgent (real provider HTTP). Create `test/live/<provider>-describe.spec.ts` smoke test per provider sending real describe against a small public image. Each uses `describe.skipIf(!process.env.INTEGRATION || !process.env.<PROVIDER_KEY>)` so missing creds skip rather than fail. Register `pnpm test:live` vitest project scoped to `test/live/**`. Acceptance: `INTEGRATION=1 OPENAI_API_KEY=... pnpm test:live` exercises at least the OpenAI smoke against real API. Depends on: R08, R20.
+- [ ] **R22** Create multi-stage `Dockerfile`. Stage 1 `builder`: `node:20-alpine`, `corepack enable`, copy manifests, `pnpm install --frozen-lockfile`, copy sources, `pnpm build`. Stage 2 `runner`: `node:20-alpine`, copy `dist`, `package.json`, `pnpm-lock.yaml`, `pnpm install --prod --frozen-lockfile`, `USER node`, `EXPOSE 8080`, `HEALTHCHECK` curling `/healthz`, `CMD ["node", "dist/index.js"]`. Create `.dockerignore` excluding `node_modules/`, `test/`, `.git/`, `.ralph/`, `docs/`, `graphify-out/`, `.github/`, `coverage/`. Acceptance: `docker build -t retina:test .` succeeds; `docker run --rm -e REDIS_URL=... -e PROVIDERS=openai -e DEFAULT_PROVIDER=openai -e OPENAI_API_KEY=test retina:test` boots and `/healthz` responds. Depends on: R13.
+- [ ] **R23** Create `docker-compose.test.yml` declaring `redis:7-alpine` on 6379 with healthcheck (`redis-cli ping`). Add README note: `docker-compose -f docker-compose.test.yml up -d` + `REDIS_URL=redis://localhost:6379/0 pnpm test:e2e` as alternative to testcontainers for local dev. Acceptance: compose launches healthy Redis; `pnpm test:e2e` points at it via `REDIS_URL`. Depends on: R22.
 
 ## Low Priority
 
-- [ ] **R24** CI pipeline `.github/workflows/ci.yml`
-  - [ ] Trigger on `pull_request`, `push` to main, and tag `v*`
-  - [ ] Jobs in order: `setup` (checkout + pnpm + cache) → `lint` (`pnpm biome ci`) → `typecheck` (`pnpm typecheck`) → `test:unit` → `test:replay` → `test:e2e` (with `services: redis: image: redis:7-alpine`) → `build`
-  - [ ] On tag `v*`: build + push image to `ghcr.io/<owner>/retina:<tag>` and `:latest` using `docker/build-push-action`
-  - [ ] Fail below 80 % coverage on `src/**` excluding `src/index.ts`
-  - [ ] Acceptance: every PR runs the full matrix; pushing a `v0.0.1` tag publishes a GHCR image
-  - [ ] Depends on: R20, R22
-
-- [ ] **R25** Live CI pipeline `.github/workflows/live.yml`
-  - [ ] Trigger on `workflow_dispatch` and `schedule: cron: "0 6 * * *"` (nightly)
-  - [ ] Inject provider creds from GitHub Secrets: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, AWS role via OIDC
-  - [ ] Run `INTEGRATION=1 pnpm test:live`
-  - [ ] Jobs fail only when live tests fail (not on skip-due-to-missing-creds)
-  - [ ] Acceptance: nightly run produces a green CI badge; manual `workflow_dispatch` runs on demand
-  - [ ] Depends on: R21
-
-- [ ] **R26** README quickstart
-  - [ ] Replace current stub README with a Quickstart showing `docker run` command + required env vars, env var reference table (required vs optional), `curl` examples for `/v1/describe` (URL and base64), `/v1/jobs` + `/v1/jobs/:id/stream` SSE, `/healthz`, and a link to `docs/superpowers/specs/2026-04-21-retina-image-api-design.md`
-  - [ ] Include a "Phase 2 roadmap" section pointing at `.ralph/fix_plan.md` Phase 2 section
-  - [ ] Include contributing pointer (ralph workflow + tests before commit)
-  - [ ] Acceptance: README opens with a 4-step quickstart that a new user can follow end-to-end
-  - [ ] Depends on: R22
-
-- [ ] **R27** Seeded example templates (/app/templates/)
-  - [ ] Create `templates/invoice-v1.json` with `{id: "invoice-v1", version: "1.0.0", description, schema}` where schema is a realistic invoice JsonSchema: `{vendor, invoiceNumber, issueDate, lineItems: [{description, quantity, unitPrice, total}], subtotal, tax, total, currency}`
-  - [ ] Create `templates/receipt-v1.json` with `{id: "receipt-v1", version: "1.0.0", description, schema}` covering `{merchant, timestamp, items: [{description, quantity, price}], total, paymentMethod}`
-  - [ ] Create `templates/README.md` documenting template file shape + naming convention + how to add new ones
-  - [ ] Acceptance: both templates pass `loadTemplates()` without error; `GET /v1/templates` returns both
-  - [ ] Depends on: R10
-
-- [ ] **R28** Graceful shutdown (src/index.ts + worker + redis)
-  - [ ] Trap `SIGTERM` and `SIGINT` in `src/index.ts` — stop accepting new HTTP requests (`server.close()`), call `worker.shutdown()` to drain in-flight jobs, disconnect ioredis publisher + subscriber + main clients, `process.exit(0)` on clean drain
-  - [ ] Add env `SHUTDOWN_TIMEOUT_MS` (default 30000) to config; force exit(1) if drain does not finish within the window
-  - [ ] In-flight jobs: either finish and publish terminal event, or be requeued on timeout (so a replacement container picks them up)
-  - [ ] Vitest integration-style test: start server, submit async job, send SIGTERM mid-run, assert clean exit code 0 and either `completed` event or job back in `retina:queue`
-  - [ ] Acceptance: `docker stop` yields a clean exit code with no leaked jobs in `retina:processing`
-  - [ ] Depends on: R13, R15
+- [ ] **R24** Create `.github/workflows/ci.yml` on `pull_request`, `push` to main, tag `v*`. Jobs in order: `setup` (checkout + pnpm + cache) → `lint` (`pnpm biome ci`) → `typecheck` (`pnpm typecheck`) → `test:unit` → `test:replay` → `test:e2e` (with `services: redis: image: redis:7-alpine`) → `build`. On tag `v*`: build + push image to `ghcr.io/<owner>/retina:<tag>` and `:latest` via `docker/build-push-action`. Fail below 80% coverage on `src/**` excluding `src/index.ts`. Acceptance: every PR runs the full matrix; pushing `v0.0.1` publishes a GHCR image. Depends on: R20, R22.
+- [ ] **R25** Create `.github/workflows/live.yml` on `workflow_dispatch` and `schedule: cron: "0 6 * * *"` nightly. Inject creds from GitHub Secrets: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, AWS role via OIDC. Run `INTEGRATION=1 pnpm test:live`. Jobs fail only when live tests fail (not on skip-due-to-missing-creds). Acceptance: nightly run produces green badge; manual `workflow_dispatch` runs on demand. Depends on: R21.
+- [ ] **R26** Replace stub `README.md` with Quickstart: `docker run` command + required env vars, env var reference table (required vs optional), `curl` examples for `/v1/describe` (URL and base64), `/v1/jobs` + `/v1/jobs/:id/stream` SSE, `/healthz`, and a link to `docs/superpowers/specs/2026-04-21-retina-image-api-design.md`. Include "Phase 2 roadmap" section pointing at `.ralph/fix_plan.md` Phase 2 block. Include contributing pointer (ralph workflow + tests before commit). Acceptance: README opens with a 4-step quickstart a new user can follow end-to-end. Depends on: R22.
+- [ ] **R27** Create `templates/invoice-v1.json` = `{id: "invoice-v1", version: "1.0.0", description, schema}` where schema is realistic invoice JsonSchema: `{vendor, invoiceNumber, issueDate, lineItems: [{description, quantity, unitPrice, total}], subtotal, tax, total, currency}`. Create `templates/receipt-v1.json` = `{id: "receipt-v1", version: "1.0.0", description, schema}` covering `{merchant, timestamp, items: [{description, quantity, price}], total, paymentMethod}`. Create `templates/README.md` documenting template file shape + naming convention + how to add new ones. Acceptance: both pass `loadTemplates()` without error; `GET /v1/templates` returns both. Depends on: R10.
+- [ ] **R28** Trap `SIGTERM`/`SIGINT` in `src/index.ts`: stop accepting new HTTP (`server.close()`), call `worker.shutdown()` to drain in-flight, disconnect ioredis publisher + subscriber + main clients, `process.exit(0)` on clean drain. Add env `SHUTDOWN_TIMEOUT_MS` (default 30000) to `src/config.ts` (R03); force `exit(1)` if drain exceeds window. In-flight jobs: either finish + publish terminal or requeue on timeout (so replacement container picks up). Vitest in `test/unit/shutdown.spec.ts`: start server, submit async job, send SIGTERM mid-run, assert clean exit 0 and either `completed` event or job back in `retina:queue`. Acceptance: `docker stop` yields clean exit with no leaked jobs in `retina:processing`. Depends on: R13, R15.
 
 ## Phase 2 (deferred, do not pick up)
 
-These are called out here only as reference. Do NOT add ralph tasks for these
-until the user explicitly promotes them.
+Reference only. Do NOT add ralph tasks until the user promotes them.
 
-- [ ] Observability: OpenTelemetry traces + Prometheus `/metrics`
-- [ ] Helm chart for Kubernetes deployments
-- [ ] Terraform module for ECS/Fargate + ALB reference deployment
-- [ ] Runtime template admin API (`POST/PUT/DELETE /v1/templates`) backed by Redis
-- [ ] Per-key rate limiting / global provider-budget cap
-- [ ] Worker/server split via `RETINA_MODE=serve|worker|both`
-- [ ] Bounding-box OCR: populate `blocks[].bbox` when a provider supplies reliable coords
-- [ ] SSE `progress` event type once a provider can emit intermediate progress
+- Observability: OpenTelemetry traces + Prometheus `/metrics`
+- Helm chart for Kubernetes deployments
+- Terraform module for ECS/Fargate + ALB reference deployment
+- Runtime template admin API (`POST/PUT/DELETE /v1/templates`) backed by Redis
+- Per-key rate limiting / global provider-budget cap
+- Worker/server split via `RETINA_MODE=serve|worker|both`
+- Bounding-box OCR: populate `blocks[].bbox` when a provider supplies reliable coords
+- SSE `progress` event type once a provider can emit intermediate progress
 
 ## Completed
 
 - [x] Project enabled for Ralph
-- [x] **R01** Scaffold pnpm + strict TypeScript + Biome + Vitest + tsconfig
-  - [x] Create `package.json` declaring `packageManager: pnpm`, Node >=20 engines, scripts `dev` (tsx watch), `build` (tsc emit to `dist`), `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), `format` (`biome format --write .`), `test`, `test:unit`, `test:replay`, `test:e2e`, `test:live`
-  - [x] Declare runtime deps: `hono`, `@hono/node-server`, `zod`, `pino`, `ai`, `@ai-sdk/openai`, `@ai-sdk/amazon-bedrock`, `@ai-sdk/anthropic`, `@ai-sdk/google`, `ioredis`, `undici`
-  - [x] Declare dev deps: `typescript`, `@types/node`, `tsx`, `vitest`, `@vitest/coverage-v8`, `@biomejs/biome`, `ioredis-mock`, `@testcontainers/redis`
-  - [x] Create `tsconfig.json` with `strict: true`, `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`, `target: ES2022`, `module: ESNext`, `moduleResolution: bundler`, `outDir: dist`, `rootDir: src`
-  - [x] Create `biome.json` (2-space indent, single quotes, trailing commas `all`, `organizeImports` on, lint recommended + TS rules)
-  - [x] Create `vitest.config.ts` with 4 project layers (unit/replay/e2e/live) each scoped by `test/<layer>/**`, coverage provider `v8`, threshold 80% on `src/**` excluding `src/index.ts`
-  - [x] Update `.gitignore` to ignore `node_modules/`, `dist/`, `coverage/`, `.vitest-cache/`
-  - [x] Stub `src/index.ts` with `process.exit(0)` placeholder
-  - [x] Acceptance: `pnpm install` succeeds, `pnpm typecheck` passes, `pnpm biome ci` passes, `pnpm test` runs (0 tests OK)
-  - [x] Depends on: —
+- [x] **R01** Scaffold pnpm + strict TypeScript + Biome + Vitest + tsconfig — see commit history
+- [x] **R02c** `src/http/middleware/request-id.ts` — attach/echo `x-request-id`, generate uuid v4 when absent, bind into Hono context
+- [x] **R02g** `src/app.ts` exporting `buildApp(deps)` composing middleware in order (request-id → size-limit → routes → error) and mounting `/healthz`
 
 ## Notes
 
-Technical constraints and decisions pulled forward from the spec so tasks can
-execute without re-reading it:
+Constraints + decisions pulled forward from spec so tasks execute without re-reading:
 
-- **Sync attempt budget**: `(1 + retries) × (1 + fallback.length)` provider
-  invocations in the worst case. Request-level `retries`/`fallback` **replace**
-  env-level values (do not merge). See R06.
-- **Async retry is outer**: `JOB_MAX_ATTEMPTS` wraps the whole sync attempt
-  budget above — a single async job can make `JOB_MAX_ATTEMPTS × (1+retries) ×
-  (1+fallback.length)` provider calls in the worst case. See R15.
-- **Callback is success-only**: worker posts the result on `complete` with 3
-  retries + 5 s timeout; failure never notifies via callback (callers must
-  poll or subscribe SSE). Spec §Data flow Async step 4. See R16.
-- **OCR bbox is reserved**: `blocks[].bbox` is always `null` in MVP. Do not
-  invent values. See R09.
-- **Coverage floor**: 80 % on `src/**` excluding `src/index.ts`. See R01
-  `vitest.config.ts`.
-- **Healthcheck composition**: `/healthz` is a stub in R02 (redis: "down")
-  and upgraded in R14 to report real client status. Keep the endpoint
-  registered throughout.
-- **Request-level timeout**: sync handlers use `AbortSignal.timeout(REQUEST_TIMEOUT_MS)`
-  mapped to `ProviderTimeoutError`. Async jobs are NOT time-capped per job.
-- **Default model IDs** (per-provider): declared as constants in R06/R07 with
-  a `TODO(spec-open-q)` marker; re-verify current vision SKUs at implementation
-  time (spec §Open questions).
+- **Sync attempt budget**: `(1 + retries) × (1 + fallback.length)` provider invocations worst case. Request-level `retries`/`fallback` REPLACE env values (do not merge). See R06c.
+- **Async retry is outer**: `JOB_MAX_ATTEMPTS` wraps the whole sync attempt budget above — one async job can make `JOB_MAX_ATTEMPTS × (1+retries) × (1+fallback.length)` provider calls worst case. See R15.
+- **Callback is success-only**: worker POSTs result on `complete` with 3 retries + 5 s timeout; failure never notifies via callback (callers poll or subscribe SSE). Spec §Data flow Async step 4. See R16.
+- **OCR bbox reserved**: `blocks[].bbox` is always `null` in MVP. Do not invent values. See R09.
+- **Coverage floor**: 80% on `src/**` excluding `src/index.ts`. See R01 `vitest.config.ts`.
+- **Healthcheck composition**: `/healthz` stub in R02f (`redis: "down"`); upgraded in R14 to report real client status. Keep endpoint registered throughout.
+- **Request-level timeout**: sync handlers use `AbortSignal.timeout(REQUEST_TIMEOUT_MS)` mapped to `ProviderTimeoutError`. Async jobs NOT time-capped per job.
+- **Default model IDs** per-provider: constants in R06b/R07a/R07b/R07c with `TODO(spec-open-q)` marker; re-verify current vision SKUs at implementation time (spec §Open questions).
 
-Open implementation questions carried forward from the spec:
+Open implementation questions carried from spec:
 
-- **Hono multipart parser**: `hono/multipart` is streaming but limited; raw
-  stream access via `@hono/node-server` may be needed to hard-cap multipart
-  uploads at `MAX_IMAGE_BYTES`. Decide inside R05 when implementing the
-  multipart path.
-- **Redis client**: `ioredis` is pre-selected (battle-tested, full pub/sub +
-  `BRPOPLPUSH` support). Spec lists `node-redis` as an alternative — only
-  switch if a blocker surfaces during R14.
+- **Hono multipart parser**: `hono/multipart` is streaming but limited; raw stream access via `@hono/node-server` may be needed to hard-cap multipart uploads at `MAX_IMAGE_BYTES`. Decide inside R05 when implementing the multipart path.
+- **Redis client**: `ioredis` is pre-selected (battle-tested, full pub/sub + `BRPOPLPUSH` support). Spec lists `node-redis` as alternative — only switch if a blocker surfaces during R14.
+
+## Parallel-safety invariants
+
+- **One leaf per claim**: every `- [ ]` line above is top-level. `pick_next_task` (ai-ralph/lib/task_sources.sh:749) uses `flock` + `^\s*- \[ \] ` regex to atomically mark `[~]`. No nested checkboxes anywhere in pending sections.
+- **No shared file writes between sibling tasks**: each task writes to a distinct file path. Where a later task edits an earlier file (e.g. R07a/b/c register in R06a's factory, R14 upgrades R02f's healthz, R28 adds to R03's config), the `Depends on:` chain enforces serialization.
+- **Tests co-located with implementation**: each leaf includes its own `test/unit/*.spec.ts` path rather than a shared test task, so two loops never race on the same test file.
+- **Completed leaves move down** to `## Completed` with their ID preserved.
