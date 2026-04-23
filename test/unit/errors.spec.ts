@@ -12,7 +12,7 @@ import {
   TemplateNotFoundError,
   UnsupportedMediaTypeError,
   ValidationError,
-} from '../../../src/core/errors.js';
+} from '../../src/core/errors.js';
 
 describe('RetinaError', () => {
   it('is an Error subclass that carries code, status, message, cause, and details', () => {
