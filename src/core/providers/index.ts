@@ -75,6 +75,11 @@ export interface ProviderCallInput {
   schema?: unknown;
   /** ISO 639 language hints for `ocr` (e.g. `['en', 'fr']`). */
   languages?: string[];
+  /**
+   * Upper bound on completion tokens forwarded to the underlying ai-sdk
+   * call. Used by `describe` (R08); `ocr`/`extract` may also honour it.
+   */
+  maxTokens?: number;
   /** Cancellation signal forwarded into the underlying ai-sdk call. */
   signal?: AbortSignal;
 }

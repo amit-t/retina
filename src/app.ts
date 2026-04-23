@@ -12,17 +12,23 @@
  *   - src/http/middleware/size-limit.ts  (reject over MAX_IMAGE_BYTES)
  *   - src/http/middleware/error.ts       (RetinaError → JSON envelope)
  *   - src/http/routes/health.ts          (GET /healthz)
+ *   - src/http/routes/describe.ts        (POST /v1/describe — mounted
+ *                                          only when `deps.router` is supplied)
  */
 
 import { Hono } from 'hono';
+import type { TaskRouter } from './core/tasks/describe';
 import { createErrorHandler, type ErrorMiddlewareLogger } from './http/middleware/error';
 import { type RequestIdVariables, requestId } from './http/middleware/request-id';
 import { sizeLimit } from './http/middleware/size-limit';
+import { createDescribeRoute } from './http/routes/describe';
 import { createHealthRoute } from './http/routes/health';
 import { buildLogger, type Logger } from './logger';
 
 /** Default body cap (10 MiB) until R03 wires `config.MAX_IMAGE_BYTES`. */
 const DEFAULT_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+/** Default sync request deadline (30 s) until R13 wires `config.REQUEST_TIMEOUT_MS`. */
+const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 
 /**
  * Dependencies wired into the app at bootstrap (R13).
@@ -36,9 +42,9 @@ const DEFAULT_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
  *   - `jobStore`  — R14 (`JobStore`, used by /v1/jobs routes in R17+)
  */
 export interface BuildAppDeps {
-  config?: { MAX_IMAGE_BYTES?: number };
+  config?: { MAX_IMAGE_BYTES?: number; REQUEST_TIMEOUT_MS?: number };
   logger?: Logger | ErrorMiddlewareLogger;
-  router?: unknown;
+  router?: TaskRouter;
   templates?: unknown;
   jobStore?: unknown;
 }
@@ -68,6 +74,7 @@ export type AppEnv = { Variables: AppVariables };
 export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const maxBytes = deps.config?.MAX_IMAGE_BYTES ?? DEFAULT_MAX_IMAGE_BYTES;
+  const requestTimeoutMs = deps.config?.REQUEST_TIMEOUT_MS ?? DEFAULT_REQUEST_TIMEOUT_MS;
   const logger = deps.logger ?? buildLogger('info');
 
   // 1. request-id — runs first so every downstream log/response carries it.
@@ -76,8 +83,19 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
   // 2. size-limit — rejects oversized bodies before any route buffers them.
   app.use(sizeLimit(maxBytes));
 
-  // 3. routes — /healthz is the only route at R02; R08–R18 mount the rest.
+  // 3. routes — /healthz always on; task routes mount only when their
+  //    dependencies are supplied so unit tests that build a bare app
+  //    without a router stay zero-wiring.
   app.route('/', createHealthRoute());
+  if (deps.router !== undefined) {
+    app.route(
+      '/',
+      createDescribeRoute({
+        router: deps.router,
+        config: { MAX_IMAGE_BYTES: maxBytes, REQUEST_TIMEOUT_MS: requestTimeoutMs },
+      }),
+    );
+  }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
   app.onError(createErrorHandler({ logger }));
