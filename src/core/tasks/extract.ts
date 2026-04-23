@@ -70,15 +70,16 @@ export interface TaskRouter {
 export type JsonSchema = Record<string, unknown>;
 
 /**
- * Registered template shape. `id` echoes into the response when the
- * template path is taken; `schema` is forwarded into the provider call.
- * `version` / `description` are metadata returned by `GET /v1/templates`
- * and are unused by this runner.
+ * Structural template shape consumed by {@link runExtract}. Only the two
+ * fields the runner reads are required here — `id` echoes into the
+ * response when the template path is taken, and `schema` is forwarded
+ * into the provider call. R10's concrete `Template` carries richer
+ * metadata (`version`, `description`) which satisfies this interface by
+ * construction; `GET /v1/templates` reads that metadata directly from the
+ * registry, not through this type.
  */
 export interface Template {
   id: string;
-  version: string;
-  description: string;
   schema: JsonSchema;
 }
 
