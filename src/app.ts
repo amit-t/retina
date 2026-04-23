@@ -19,7 +19,7 @@ import { createErrorHandler, type ErrorMiddlewareLogger } from './http/middlewar
 import { type RequestIdVariables, requestId } from './http/middleware/request-id';
 import { sizeLimit } from './http/middleware/size-limit';
 import { createHealthRoute } from './http/routes/health';
-import { createLogger, type Logger } from './logger';
+import { buildLogger, type Logger } from './logger';
 
 /** Default body cap (10 MiB) until R03 wires `config.MAX_IMAGE_BYTES`. */
 const DEFAULT_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -68,7 +68,7 @@ export type AppEnv = { Variables: AppVariables };
 export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const maxBytes = deps.config?.MAX_IMAGE_BYTES ?? DEFAULT_MAX_IMAGE_BYTES;
-  const logger = deps.logger ?? createLogger('info');
+  const logger = deps.logger ?? buildLogger('info');
 
   // 1. request-id — runs first so every downstream log/response carries it.
   app.use(requestId());
