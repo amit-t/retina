@@ -14,6 +14,8 @@
  *   - src/http/routes/health.ts          (GET /healthz)
  *   - src/http/routes/describe.ts        (POST /v1/describe — mounted
  *                                          only when `deps.router` is supplied)
+ *   - src/http/routes/ocr.ts             (POST /v1/ocr — mounted only when
+ *                                          `deps.router` is supplied)
  */
 
 import { Hono } from 'hono';
@@ -23,6 +25,7 @@ import { type RequestIdVariables, requestId } from './http/middleware/request-id
 import { sizeLimit } from './http/middleware/size-limit';
 import { createDescribeRoute } from './http/routes/describe';
 import { createHealthRoute } from './http/routes/health';
+import { createOcrRoute } from './http/routes/ocr';
 import { buildLogger, type Logger } from './logger';
 
 /** Default body cap (10 MiB) until R03 wires `config.MAX_IMAGE_BYTES`. */
@@ -44,6 +47,9 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 export interface BuildAppDeps {
   config?: { MAX_IMAGE_BYTES?: number; REQUEST_TIMEOUT_MS?: number };
   logger?: Logger | ErrorMiddlewareLogger;
+  /** R06c `ProviderRouter` (or any structural `TaskRouter`). When omitted the
+   *  routes that need a router (e.g. `/v1/describe`, `/v1/ocr`) are not
+   *  mounted, keeping /healthz-only test harnesses self-contained. */
   router?: TaskRouter;
   templates?: unknown;
   jobStore?: unknown;
@@ -95,6 +101,7 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
         config: { MAX_IMAGE_BYTES: maxBytes, REQUEST_TIMEOUT_MS: requestTimeoutMs },
       }),
     );
+    app.route('/', createOcrRoute({ router: deps.router, maxBytes }));
   }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
