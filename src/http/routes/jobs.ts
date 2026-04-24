@@ -1,5 +1,6 @@
 /**
- * `POST /v1/jobs` + `GET /v1/jobs/:id` — async job endpoints.
+ * `POST /v1/jobs` + `GET /v1/jobs/:id` + `GET /v1/jobs/:id/stream` —
+ * async job endpoints.
  *
  * Pipeline (spec §Data flow › Async job):
  *
@@ -7,10 +8,12 @@
  *       → JobStore.enqueue (R14) → respond 202 {jobId, status:"queued"}
  *   GET : JobStore.get(id) → 200 JobRecord JSON
  *                         → miss → throw JobNotFoundError → 404 envelope
+ *   GET …/stream: JobStore.get(id) → `streamJob()` SSE body
+ *                                  → miss → 404 JSON envelope
  *
- * SSE streaming (`GET /v1/jobs/:id/stream`) is a separate route mounted
- * by R18 on top of the same `src/jobs/sse.ts` module; it is intentionally
- * NOT part of this file so R17 can land before R14/R15 are merged.
+ * R17 contributes POST + GET /:id; R18 contributes the SSE stream route.
+ * Both factories are exposed so `buildApp()` can mount them conditionally
+ * on `deps.jobStore` without a cross-task file dependency.
  *
  * Error handling: only `RetinaError` subclasses are thrown. The shared
  * error middleware (R02e) shapes the JSON envelope and attaches the
@@ -20,6 +23,7 @@
 import { Hono } from 'hono';
 import { JobNotFoundError, ValidationError } from '../../core/errors.js';
 import { type NormalizeInput, normalize } from '../../core/image.js';
+import { type StreamJobStore, streamJob } from '../../jobs/sse.js';
 import type { EnqueueInput, JobPayload, JobStore } from '../../jobs/store.js';
 import type {
   DescribeResponse,
@@ -41,10 +45,11 @@ export interface JobsRouteDeps {
 }
 
 /**
- * Build the jobs route. Returned Hono app is mountable at the root by
- * the composition root (`src/app.ts`). `buildApp()` only mounts it when
- * `deps.jobStore` is supplied so unit tests that don't exercise the
- * async path stay wiring-free.
+ * Build the R17 jobs routes (`POST /v1/jobs`, `GET /v1/jobs/:id`).
+ * Returned Hono app is mountable at the root by the composition root
+ * (`src/app.ts`). `buildApp()` only mounts it when `deps.jobStore` is
+ * supplied so unit tests that don't exercise the async path stay
+ * wiring-free.
  */
 export function createJobsRoute(deps: JobsRouteDeps): Hono {
   const app = new Hono();
@@ -107,6 +112,53 @@ export function createJobsRoute(deps: JobsRouteDeps): Hono {
       error: record.error,
     };
     return c.json(response);
+  });
+
+  return app;
+}
+
+export interface CreateJobsStreamRouteDeps {
+  store: StreamJobStore;
+  /** Wired from `config.SSE_HEARTBEAT_MS`. */
+  heartbeatMs: number;
+}
+
+/**
+ * `GET /v1/jobs/:id/stream` — Server-Sent Events stream for a single job.
+ *
+ * Contract (spec §API contracts, fix_plan.md R18):
+ *   - Pre-flight: `store.get(id)`. Missing → `JobNotFoundError` (404 JSON
+ *     envelope via the global error middleware). The stream body is only
+ *     established once we've confirmed the job exists, so the 404 path
+ *     still returns a normal JSON response rather than an empty SSE stream.
+ *   - Success: 200 + `Content-Type: text/event-stream` with the body
+ *     produced by `streamJob()`. The first event is the current state;
+ *     subsequent events are forwarded from the `retina:job:<id>` pub/sub
+ *     channel. Terminal events (`completed`, `failed`) or client
+ *     disconnect close the stream.
+ */
+export function createJobsStreamRoute(deps: CreateJobsStreamRouteDeps): Hono {
+  const app = new Hono();
+
+  app.get('/v1/jobs/:id/stream', async (c) => {
+    const jobId = c.req.param('id');
+    const record = await deps.store.get(jobId);
+    if (record === null) {
+      throw new JobNotFoundError(`Job "${jobId}" not found`);
+    }
+
+    c.header('Content-Type', 'text/event-stream');
+    c.header('Cache-Control', 'no-cache');
+    c.header('Connection', 'keep-alive');
+    // Disable buffering for reverse proxies (nginx) that would otherwise
+    // withhold chunks until the buffer fills — defeating SSE.
+    c.header('X-Accel-Buffering', 'no');
+
+    const streamOpts: Parameters<typeof streamJob>[2] = { heartbeatMs: deps.heartbeatMs };
+    if (c.req.raw.signal !== undefined) streamOpts.signal = c.req.raw.signal;
+
+    const body = streamJob(jobId, deps.store, streamOpts);
+    return c.body(body);
   });
 
   return app;
