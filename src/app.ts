@@ -16,14 +16,19 @@
  *                                          only when `deps.router` is supplied)
  *   - src/http/routes/ocr.ts             (POST /v1/ocr — mounted only when
  *                                          `deps.router` is supplied)
+ *   - src/http/routes/extract.ts         (POST /v1/extract — mounted only when
+ *                                          both `deps.router` AND
+ *                                          `deps.templates` are supplied)
  */
 
 import { Hono } from 'hono';
 import type { TaskRouter } from './core/tasks/describe';
+import type { TemplateRegistry } from './core/tasks/extract';
 import { createErrorHandler, type ErrorMiddlewareLogger } from './http/middleware/error';
 import { type RequestIdVariables, requestId } from './http/middleware/request-id';
 import { sizeLimit } from './http/middleware/size-limit';
 import { createDescribeRoute } from './http/routes/describe';
+import { createExtractRoute } from './http/routes/extract';
 import { createHealthRoute } from './http/routes/health';
 import { createOcrRoute } from './http/routes/ocr';
 import { buildLogger, type Logger } from './logger';
@@ -51,7 +56,10 @@ export interface BuildAppDeps {
    *  routes that need a router (e.g. `/v1/describe`, `/v1/ocr`) are not
    *  mounted, keeping /healthz-only test harnesses self-contained. */
   router?: TaskRouter;
-  templates?: unknown;
+  /** R10 `TemplateRegistry`. When supplied alongside `router`, the extract
+   *  route is mounted; otherwise it is skipped so tests that don't care about
+   *  templates stay zero-wiring. */
+  templates?: TemplateRegistry;
   jobStore?: unknown;
 }
 
@@ -102,6 +110,16 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
       }),
     );
     app.route('/', createOcrRoute({ router: deps.router, maxBytes }));
+    if (deps.templates !== undefined) {
+      app.route(
+        '/',
+        createExtractRoute({
+          router: deps.router,
+          templates: deps.templates,
+          config: { MAX_IMAGE_BYTES: maxBytes, REQUEST_TIMEOUT_MS: requestTimeoutMs },
+        }),
+      );
+    }
   }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
