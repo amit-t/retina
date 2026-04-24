@@ -6,8 +6,8 @@
  *     loadConfig() → buildLogger(level)
  *                  → createProvider factory (side-effect-registered backends)
  *                  → ProviderRouter
- *                  → loadTemplates   (R10 — wired once landed)
- *                  → buildApp({config, logger, router, templates, store?})
+ *                  → loadTemplates (skipped when TEMPLATES_DIR is absent)
+ *                  → buildApp({config, logger, router, templates?})
  *                  → serve({fetch: app.fetch, port}) via @hono/node-server
  *
  * On successful startup we log a single `retina_starting` line whose
@@ -24,6 +24,7 @@
  * non-zero per the R13 acceptance criteria.
  */
 
+import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 import { serve } from '@hono/node-server';
@@ -39,6 +40,7 @@ import './core/providers/anthropic.js';
 import './core/providers/bedrock.js';
 import './core/providers/google.js';
 import './core/providers/openai.js';
+import { loadTemplates, type TemplateRegistry } from './core/templates.js';
 import { buildLogger } from './logger.js';
 
 /** Exact-match keys redacted from the startup banner. */
@@ -94,11 +96,25 @@ async function main(): Promise<void> {
     createProvider(factoryConfig, name);
   const router = new ProviderRouter(config, factory);
 
-  // R10 (`src/core/templates.ts`) lands separately — the registry is
-  // optional in `buildApp`, so we omit it here until that task completes.
-  // Routes depending on templates (R11 `/v1/extract`, R12a `/v1/templates`)
-  // are wired to take the registry in their own composition steps.
-  const app = buildApp({ config, logger, router });
+  // Templates (R10) are optional at boot. A missing `TEMPLATES_DIR` is
+  // common in fresh checkouts / bare container runs — we warn and
+  // continue; routes requiring templates (`/v1/extract`, `/v1/templates`,
+  // the `extract` branch of `/v1/analyze`) simply stay unmounted. A dir
+  // that exists but contains malformed files remains fatal per R10.
+  let templates: TemplateRegistry | undefined;
+  if (existsSync(config.TEMPLATES_DIR)) {
+    templates = loadTemplates(config.TEMPLATES_DIR);
+    logger.info({ dir: config.TEMPLATES_DIR, count: templates.list().length }, 'templates_loaded');
+  } else {
+    logger.warn({ dir: config.TEMPLATES_DIR }, 'templates_directory_missing');
+  }
+
+  const app = buildApp({
+    config,
+    logger,
+    router,
+    ...(templates !== undefined ? { templates } : {}),
+  });
 
   logger.info({ config: redactConfigForLogging(config) }, 'retina_starting');
 
