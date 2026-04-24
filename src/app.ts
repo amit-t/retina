@@ -33,7 +33,7 @@ import { sizeLimit } from './http/middleware/size-limit';
 import { createAnalyzeRoute } from './http/routes/analyze';
 import { createDescribeRoute } from './http/routes/describe';
 import { createExtractRoute } from './http/routes/extract';
-import { createHealthRoute } from './http/routes/health';
+import { createHealthRoute, type RedisStatusProbe } from './http/routes/health';
 import { createOcrRoute } from './http/routes/ocr';
 import { buildLogger, type Logger } from './logger';
 
@@ -54,7 +54,12 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
  *   - `jobStore`  — R14 (`JobStore`, used by /v1/jobs routes in R17+)
  */
 export interface BuildAppDeps {
-  config?: { MAX_IMAGE_BYTES?: number; REQUEST_TIMEOUT_MS?: number };
+  config?: {
+    MAX_IMAGE_BYTES?: number;
+    REQUEST_TIMEOUT_MS?: number;
+    /** Configured provider names, surfaced on `GET /healthz`. */
+    PROVIDERS?: readonly string[];
+  };
   logger?: Logger | ErrorMiddlewareLogger;
   /** R06c `ProviderRouter` (or any structural `TaskRouter`). When omitted the
    *  routes that need a router (e.g. `/v1/describe`, `/v1/ocr`, `/v1/analyze`)
@@ -66,6 +71,10 @@ export interface BuildAppDeps {
    *  supplied alongside `router`, `/v1/extract` is also mounted. */
   templates?: TemplateRegistry;
   jobStore?: unknown;
+  /** ioredis client used by `GET /healthz` to report `redis: up|down`
+   *  from the connection `status`. R13 wires the real ioredis instance;
+   *  omission leaves the health route reporting `redis: "down"`. */
+  redis?: RedisStatusProbe;
 }
 
 /** Hono context variables set by this app's middleware. */
@@ -105,7 +114,13 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
   // 3. routes — /healthz always on; task routes mount only when their
   //    dependencies are supplied so unit tests that build a bare app
   //    without a router stay zero-wiring.
-  app.route('/', createHealthRoute());
+  app.route(
+    '/',
+    createHealthRoute({
+      ...(deps.redis !== undefined ? { redis: deps.redis } : {}),
+      ...(deps.config?.PROVIDERS !== undefined ? { providers: deps.config.PROVIDERS } : {}),
+    }),
+  );
   if (deps.router !== undefined) {
     app.route(
       '/',

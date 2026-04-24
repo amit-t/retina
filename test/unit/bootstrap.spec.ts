@@ -91,7 +91,7 @@ describe('bootstrap wiring (R13)', () => {
       redis: string;
       providers: Record<string, unknown>;
     };
-    expect(body).toEqual({ ok: true, redis: 'down', providers: {} });
+    expect(body).toEqual({ ok: true, redis: 'down', providers: { openai: 'configured' } });
   });
 
   it('redacts AWS_*, GOOGLE_*, OPENAI_API_KEY and ANTHROPIC_API_KEY in the startup banner payload', () => {
