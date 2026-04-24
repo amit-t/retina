@@ -1,0 +1,36 @@
+{
+  "provider": "google",
+  "task": "describe",
+  "model": "gemini-2.5-flash",
+  "request": {
+    "origin": "https://generativelanguage.googleapis.com",
+    "method": "POST",
+    "path": "/v1beta/models/gemini-2.5-flash:generateContent"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "A replay fixture image of a golden retriever lying on a green lawn under soft afternoon sunlight."
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP"
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 96,
+        "candidatesTokenCount": 20,
+        "totalTokenCount": 116
+      }
+    }
+  }
+}
