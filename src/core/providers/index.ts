@@ -41,13 +41,19 @@ export type ProviderName = (typeof PROVIDERS)[number];
  */
 export interface ProviderFactoryConfig {
   readonly PROVIDERS: readonly string[];
-  readonly DEFAULT_MODEL?: string;
-  readonly AWS_REGION?: string;
-  readonly AWS_ACCESS_KEY_ID?: string;
-  readonly AWS_SECRET_ACCESS_KEY?: string;
-  readonly OPENAI_API_KEY?: string;
-  readonly ANTHROPIC_API_KEY?: string;
-  readonly GOOGLE_GENERATIVE_AI_API_KEY?: string;
+  // Optional credential / override fields. We spell the union as
+  // `string | undefined` rather than bare `?: string` so the Zod-inferred
+  // `Config` from `src/config.ts` (which always carries the key with an
+  // `undefined` value when the env var is absent) structurally satisfies
+  // this interface under `exactOptionalPropertyTypes`. R13 bootstrap
+  // passes `config` straight into this factory.
+  readonly DEFAULT_MODEL?: string | undefined;
+  readonly AWS_REGION?: string | undefined;
+  readonly AWS_ACCESS_KEY_ID?: string | undefined;
+  readonly AWS_SECRET_ACCESS_KEY?: string | undefined;
+  readonly OPENAI_API_KEY?: string | undefined;
+  readonly ANTHROPIC_API_KEY?: string | undefined;
+  readonly GOOGLE_GENERATIVE_AI_API_KEY?: string | undefined;
 }
 
 /**

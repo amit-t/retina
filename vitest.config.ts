@@ -35,6 +35,16 @@ export default defineConfig({
         test: {
           name: 'e2e',
           include: ['test/e2e/**/*.{spec,test}.ts'],
+          // R20 — globalSetup boots a Redis testcontainer + Hono server on
+          // a random free port and exports RETINA_E2E_{BASE_URL,REDIS_URL,
+          // JOBS_READY} for the lifecycle spec. Scoped to the e2e project
+          // so `pnpm test:unit` stays docker-free.
+          globalSetup: ['./test/e2e/setup.ts'],
+          // Lifecycle polling + testcontainer boot push past the 5 s
+          // default; 60 s matches the container startup timeout in
+          // setup.ts.
+          testTimeout: 60_000,
+          hookTimeout: 120_000,
         },
       },
       {

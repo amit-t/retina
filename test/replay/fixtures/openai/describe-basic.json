@@ -1,0 +1,39 @@
+{
+  "provider": "openai",
+  "task": "describe",
+  "model": "gpt-4o",
+  "request": {
+    "origin": "https://api.openai.com",
+    "method": "POST",
+    "path": "/v1/responses"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "id": "resp_replay_describe_basic",
+      "created_at": 1714000000,
+      "model": "gpt-4o",
+      "output": [
+        {
+          "type": "message",
+          "role": "assistant",
+          "id": "msg_replay_describe_basic",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "A replay fixture image showing a single ripe red apple on a wooden table, softly lit from the left.",
+              "annotations": []
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 128,
+        "output_tokens": 24
+      }
+    }
+  }
+}
