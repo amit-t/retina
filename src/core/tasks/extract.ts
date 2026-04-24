@@ -2,35 +2,35 @@
  * `extract` task runner.
  *
  * `runExtract(router, registry, opts)` is the provider-agnostic slice invoked
- * by `POST /v1/extract` (R11 route) and the `extract` branch of `POST
- * /v1/analyze` (R12b). It resolves the JSON Schema the provider must produce
- * from EITHER the ad-hoc `opts.schema` OR a template looked up by
- * `opts.templateId`, forwards the per-request `ProviderOptions` via
- * replace-semantics (constitution invariant #8), and shapes the provider's
- * structured-output result into the wire shape:
+ * by both `POST /v1/extract` (sync) and `POST /v1/jobs` when
+ * `task === 'extract'` (async, R17). It resolves the JSON Schema from one of
+ * two mutually-exclusive sources — the ad-hoc `opts.schema` or the
+ * server-registered template keyed by `opts.templateId` — then dispatches
+ * through the `TaskRouter` in structured-output mode.
  *
- *   { data, templateId, provider, model, usage }
+ * Spec § `POST /v1/extract` fixes the wire response shape:
  *
- * The structural `TaskRouter` interface lives in this module so R12b can
- * depend on it without importing `src/core/tasks/describe.ts` transitively.
- * The concrete `ProviderRouter` (R06c) satisfies it structurally.
+ *     { data, templateId: string | null, provider, model, usage }
  *
- * NOTE (R12b scope): this file ships the minimum surface `src/http/routes/
- * analyze.ts` needs to dispatch the extract branch with mocked deps in its
- * unit tests. R11 will flesh it out with structured-output semantics on the
- * provider side, a dedicated `POST /v1/extract` route, and its own
- * `test/unit/route-extract.spec.ts` suite.
+ * The ad-hoc path always emits `templateId: null` so callers can tell which
+ * code path the server took without inspecting the request.
+ *
+ * Structural typing note: this module deliberately depends on structural
+ * slices of `ProviderRouter` (R06c) and `TemplateRegistry` (R10) rather than
+ * importing the concrete classes. That lets R11 land ahead of R10 and keeps
+ * unit tests free of mock-heavy wiring — any test double that satisfies the
+ * two interfaces suffices.
  */
 
-import { TemplateNotFoundError, ValidationError } from '../errors.js';
 import type { ProviderCallInput, ProviderUsage } from '../providers/index.js';
 
-/** Task names the router dispatches on — mirrors `Provider`'s three methods. */
+/** Task names the router dispatches on; mirrors `Provider`'s three methods. */
 export type TaskName = 'describe' | 'ocr' | 'extract';
 
 /**
- * Per-request router overrides. Each field REPLACES (does not merge with)
- * the env-level default inside `ProviderRouter` (constitution invariant #8).
+ * Per-request router overrides. Each field REPLACES the env-level default
+ * inside `ProviderRouter` (constitution invariant #8) — this module only
+ * forwards the values, it neither merges nor inspects them.
  */
 export interface TaskRouterCallOptions {
   provider?: string;
@@ -40,79 +40,93 @@ export interface TaskRouterCallOptions {
   signal?: AbortSignal;
 }
 
+/** Uniform router result — matches R06c §ProviderRouter.call return. */
+export interface TaskRouterResult {
+  output: unknown;
+  usage: ProviderUsage;
+  provider: string;
+  model: string;
+}
+
 /**
- * Structural slice of R06c's `ProviderRouter.call` surface that this task
- * runner needs. Concrete `ProviderRouter` instances satisfy this by
- * construction; test doubles only need to implement `call`.
+ * Structural slice of R06c's `ProviderRouter.call` surface. Concrete
+ * `ProviderRouter` instances satisfy this by construction; unit tests only
+ * need to implement `call`.
  */
 export interface TaskRouter {
   call(
     task: TaskName,
     input: ProviderCallInput,
     opts?: TaskRouterCallOptions,
-  ): Promise<{
-    output: unknown;
-    usage: ProviderUsage;
-    provider: string;
-    model: string;
-  }>;
+  ): Promise<TaskRouterResult>;
 }
 
 /**
- * Permissive JSON Schema shape accepted at this layer. The full validity of
- * a JSON Schema document is the provider's concern (ai-sdk structured-output
- * mode), not this runner's.
+ * JSON Schema carried by a template or supplied ad-hoc. The provider layer
+ * forwards the object verbatim into `ai-sdk`'s `jsonSchema()` helper, so
+ * validity as a full JSON Schema 7 document is the provider's concern —
+ * Retina just type-tags it as a plain object at this layer.
  */
-export type JsonSchemaObject = Record<string, unknown>;
+export type JsonSchema = Record<string, unknown>;
 
 /**
- * One template as returned by `TemplateRegistry.get`. The full shape comes
- * from R10 (`src/core/templates.ts`); this file only depends on the two
- * fields `runExtract` reads — `id` for the response envelope and `schema`
- * for the provider call.
+ * Structural template shape consumed by {@link runExtract}. Only the two
+ * fields the runner reads are required here — `id` echoes into the
+ * response when the template path is taken, and `schema` is forwarded
+ * into the provider call. R10's concrete `Template` carries richer
+ * metadata (`version`, `description`) which satisfies this interface by
+ * construction; `GET /v1/templates` reads that metadata directly from the
+ * registry, not through this type.
  */
 export interface Template {
   id: string;
-  version: string;
-  description: string;
-  schema: JsonSchemaObject;
+  schema: JsonSchema;
 }
 
 /**
- * Structural slice of R10's `TemplateRegistry` used by `runExtract`.
- *
- * `.get(id)` must throw `TemplateNotFoundError` on miss (R11 spec). R10's
- * concrete implementation satisfies this by construction; tests can supply
- * an object literal with just a `get` method.
+ * Structural slice of R10's `TemplateRegistry`. `get()` MUST throw
+ * `TemplateNotFoundError` (from `src/core/errors.ts`) when the id does not
+ * resolve — the error middleware maps that to a 404 `template_not_found`
+ * response envelope, so this module neither catches nor rewraps the error.
  */
 export interface TemplateRegistry {
   get(id: string): Template;
-  list(): ReadonlyArray<Pick<Template, 'id' | 'version' | 'description'>>;
 }
 
-/**
- * Inputs to {@link runExtract}. `bytes`/`mime` come from `normalize()` (R05);
- * `schema` XOR `templateId` mirrors the wire contract — the XOR itself is
- * enforced by Zod (`src/http/schemas.ts`), so this runner treats both
- * fields as opaque and re-checks only that exactly one was supplied.
- */
-export interface RunExtractOptions {
-  bytes: Uint8Array;
-  mime: string;
-  /** Ad-hoc JSON Schema the caller wants the provider to produce. */
-  schema?: JsonSchemaObject;
-  /** Template id resolved against `registry`. */
-  templateId?: string;
+/** Per-request provider controls accepted by the task runner. Mirrors the
+ *  `ProviderOptions` shape in `src/http/schemas.ts`. */
+export interface TaskProviderOptions {
   provider?: string;
   model?: string;
   fallback?: string[];
   retries?: number;
+}
+
+/**
+ * Input to {@link runExtract}. Assembled by the HTTP route after Zod
+ * validation (R04) and image normalization (R05). Exactly one of `schema`
+ * or `templateId` must be populated — the XOR guard in R04 enforces this
+ * at the wire layer; `runExtract` trusts its callers and prefers `schema`
+ * if both happen to be supplied.
+ */
+export interface ExtractTaskInput {
+  bytes: Uint8Array;
+  mime: string;
+  /** Ad-hoc JSON Schema — wins if both `schema` and `templateId` are set. */
+  schema?: JsonSchema;
+  /** Id of a server-registered template (loaded from `TEMPLATES_DIR`). */
+  templateId?: string;
+  /** Per-request router overrides. */
+  providerOptions?: TaskProviderOptions;
+  /** Cancellation signal threaded through to the provider. */
   signal?: AbortSignal;
 }
 
-/** Shape returned to the route handler — matches `ExtractResponse` in
- *  `src/http/schemas.ts`. `templateId` is `null` when the ad-hoc `schema`
- *  path was used, the resolved id otherwise. */
+/**
+ * Shape returned to the route handler — matches `ExtractResponse` in
+ * `src/http/schemas.ts`. `templateId` is `null` on the ad-hoc path and the
+ * resolved id on the template path.
+ */
 export interface ExtractResult {
   data: Record<string, unknown>;
   templateId: string | null;
@@ -121,92 +135,95 @@ export interface ExtractResult {
   usage: ProviderUsage;
 }
 
+/**
+ * Run an extract task via the provider router.
+ *
+ * Resolution rules:
+ *
+ *  - `opts.schema` present → ad-hoc path; response `templateId` is `null`.
+ *    The registry is NOT consulted.
+ *  - `opts.templateId` present (and `schema` absent) → template path;
+ *    `registry.get(id)` resolves the schema. On unknown id the registry
+ *    throws `TemplateNotFoundError` (from `src/core/errors.ts`) which
+ *    propagates out of `runExtract` unchanged so the error middleware can
+ *    shape the 404.
+ *  - Neither present → this indicates a caller bug (the Zod XOR guard in
+ *    R04 is meant to reject that at the route layer). We throw a plain
+ *    `Error` here rather than a typed `RetinaError` so it surfaces as a
+ *    500 `internal_error` in the envelope — the wire contract has already
+ *    been violated upstream.
+ *
+ * Response coercion:
+ *
+ *  - The provider returns `output: unknown`. ai-sdk's `generateObject`
+ *    yields a JS object for well-formed structured output; `extract`
+ *    implementations (R06b/R07a-c) forward that straight through. Non-
+ *    object outputs (null, string, array, etc.) are coerced to `{}` so the
+ *    `data: Record<string, unknown>` contract always holds — the wire
+ *    shape never lies about containing an object.
+ */
 export async function runExtract(
   router: TaskRouter,
   registry: TemplateRegistry,
-  opts: RunExtractOptions,
+  opts: ExtractTaskInput,
 ): Promise<ExtractResult> {
-  const { schema, templateId } = resolveSchema(registry, opts);
+  const { schema, templateIdEcho } = resolveSchema(registry, opts);
 
-  const callInput: ProviderCallInput = {
+  const input: ProviderCallInput = {
     bytes: opts.bytes,
     mime: opts.mime,
     schema,
+    ...(opts.signal !== undefined ? { signal: opts.signal } : {}),
   };
-  if (opts.signal !== undefined) callInput.signal = opts.signal;
 
-  const callOpts: TaskRouterCallOptions = {};
-  if (opts.provider !== undefined) callOpts.provider = opts.provider;
-  if (opts.model !== undefined) callOpts.model = opts.model;
-  if (opts.fallback !== undefined) callOpts.fallback = opts.fallback;
-  if (opts.retries !== undefined) callOpts.retries = opts.retries;
-  if (opts.signal !== undefined) callOpts.signal = opts.signal;
+  const callOpts = buildCallOptions(opts.providerOptions, opts.signal);
 
-  const hasOpts = Object.keys(callOpts).length > 0;
-  const result = hasOpts
-    ? await router.call('extract', callInput, callOpts)
-    : await router.call('extract', callInput);
+  const { output, usage, provider, model } =
+    callOpts === undefined
+      ? await router.call('extract', input)
+      : await router.call('extract', input, callOpts);
 
   return {
-    data: coerceData(result.output),
-    templateId,
-    provider: result.provider,
-    model: result.model,
-    usage: result.usage,
+    data: coerceData(output),
+    templateId: templateIdEcho,
+    provider,
+    model,
+    usage,
   };
 }
 
-/**
- * Resolve the schema for a provider call.
- *
- *   - `opts.schema` → ad-hoc path; `templateId` in the response is `null`.
- *   - `opts.templateId` → registry lookup; response `templateId` is the
- *     resolved id (propagated even if the registry normalizes casing).
- *
- * The Zod layer already enforces XOR so hitting the neither/both branches
- * here is a wiring bug, not a user error — throw `ValidationError` so the
- * error envelope is still correct if it does happen.
- */
 function resolveSchema(
   registry: TemplateRegistry,
-  opts: RunExtractOptions,
-): { schema: JsonSchemaObject; templateId: string | null } {
-  const hasSchema = opts.schema !== undefined;
-  const hasTemplate = opts.templateId !== undefined;
-
-  if (hasSchema && hasTemplate) {
-    throw new ValidationError('Provide exactly one of `schema` or `templateId`, not both.');
+  opts: ExtractTaskInput,
+): { schema: JsonSchema; templateIdEcho: string | null } {
+  if (opts.schema !== undefined) {
+    return { schema: opts.schema, templateIdEcho: null };
   }
-  if (!hasSchema && !hasTemplate) {
-    throw new ValidationError('Provide one of `schema` or `templateId`.');
+  if (opts.templateId !== undefined) {
+    const template = registry.get(opts.templateId);
+    return { schema: template.schema, templateIdEcho: template.id };
   }
-
-  if (hasSchema) {
-    // biome-ignore lint/style/noNonNullAssertion: guarded by hasSchema.
-    return { schema: opts.schema!, templateId: null };
-  }
-
-  // biome-ignore lint/style/noNonNullAssertion: guarded by hasTemplate.
-  const template = registry.get(opts.templateId!);
-  if (template === undefined) {
-    // Defence-in-depth: R10 contract says `.get` throws on miss, but a test
-    // double that returns `undefined` must still map to the canonical 404.
-    throw new TemplateNotFoundError(`Template "${opts.templateId}" not found`);
-  }
-  return { schema: template.schema, templateId: template.id };
+  throw new Error(
+    'runExtract requires one of `schema` or `templateId`; the route-layer XOR guard (R04) should have rejected this request',
+  );
 }
 
-/**
- * Coerce the provider's structured-output `output` into the response `data`
- * field. Providers (R06b/R07*, via ai-sdk structured-output) return a
- * parsed object; we only refuse non-objects so the wire type
- * `Record<string, unknown>` holds.
- */
+function buildCallOptions(
+  providerOptions: TaskProviderOptions | undefined,
+  signal: AbortSignal | undefined,
+): TaskRouterCallOptions | undefined {
+  const out: TaskRouterCallOptions = {};
+  if (providerOptions?.provider !== undefined) out.provider = providerOptions.provider;
+  if (providerOptions?.model !== undefined) out.model = providerOptions.model;
+  if (providerOptions?.fallback !== undefined) out.fallback = providerOptions.fallback;
+  if (providerOptions?.retries !== undefined) out.retries = providerOptions.retries;
+  if (signal !== undefined) out.signal = signal;
+  return Object.keys(out).length === 0 ? undefined : out;
+}
+
 function coerceData(output: unknown): Record<string, unknown> {
   if (output !== null && typeof output === 'object' && !Array.isArray(output)) {
     return output as Record<string, unknown>;
   }
-  throw new ValidationError('Provider returned non-object extract result', {
-    details: { outputType: output === null ? 'null' : typeof output },
-  });
+  return {};
 }

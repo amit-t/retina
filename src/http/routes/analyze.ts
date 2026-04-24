@@ -27,8 +27,9 @@ import { ProviderTimeoutError, ValidationError } from '../../core/errors.js';
 import { type NormalizeInput, normalize } from '../../core/image.js';
 import { type DescribeTaskInput, runDescribe, type TaskRouter } from '../../core/tasks/describe.js';
 import {
-  type RunExtractOptions,
+  type ExtractTaskInput,
   runExtract,
+  type TaskProviderOptions,
   type TemplateRegistry,
 } from '../../core/tasks/extract.js';
 import { type RunOcrOptions, runOcr } from '../../core/tasks/ocr.js';
@@ -149,17 +150,19 @@ async function dispatch(
           'Template registry is not configured; analyze extract requests require it.',
         );
       }
-      const input: RunExtractOptions = {
+      const input: ExtractTaskInput = {
         bytes: normalized.bytes,
         mime: normalized.mime,
         signal,
       };
       if (body.schema !== undefined) input.schema = body.schema;
       if (body.templateId !== undefined) input.templateId = body.templateId;
-      if (body.provider !== undefined) input.provider = body.provider;
-      if (body.model !== undefined) input.model = body.model;
-      if (body.fallback !== undefined) input.fallback = body.fallback;
-      if (body.retries !== undefined) input.retries = body.retries;
+      const providerOptions: TaskProviderOptions = {};
+      if (body.provider !== undefined) providerOptions.provider = body.provider;
+      if (body.model !== undefined) providerOptions.model = body.model;
+      if (body.fallback !== undefined) providerOptions.fallback = body.fallback;
+      if (body.retries !== undefined) providerOptions.retries = body.retries;
+      if (Object.keys(providerOptions).length > 0) input.providerOptions = providerOptions;
 
       const result = await runExtract(deps.router, deps.templates, input);
       const response: ExtractResponse = {
