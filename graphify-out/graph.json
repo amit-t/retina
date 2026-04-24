@@ -9,8 +9,35 @@
       "source_file": "vitest.config.ts",
       "source_location": "L1",
       "id": "vitest_config_ts",
-      "community": 14,
+      "community": 25,
       "norm_label": "vitest.config.ts"
+    },
+    {
+      "label": "errors.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/errors.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_errors_spec_ts",
+      "community": 26,
+      "norm_label": "errors.spec.ts"
+    },
+    {
+      "label": "provider-bedrock.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/provider-bedrock.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_provider_bedrock_spec_ts",
+      "community": 19,
+      "norm_label": "provider-bedrock.spec.ts"
+    },
+    {
+      "label": "baseConfig()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-bedrock.spec.ts",
+      "source_location": "L57",
+      "id": "provider_bedrock_spec_baseconfig",
+      "community": 19,
+      "norm_label": "baseconfig()"
     },
     {
       "label": "app-compose.spec.ts",
@@ -18,7 +45,7 @@
       "source_file": "test/unit/app-compose.spec.ts",
       "source_location": "L1",
       "id": "test_unit_app_compose_spec_ts",
-      "community": 10,
+      "community": 20,
       "norm_label": "app-compose.spec.ts"
     },
     {
@@ -27,8 +54,35 @@
       "source_file": "test/unit/app-compose.spec.ts",
       "source_location": "L28",
       "id": "app_compose_spec_silentlogger",
-      "community": 10,
+      "community": 20,
       "norm_label": "silentlogger()"
+    },
+    {
+      "label": "provider-openai.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/provider-openai.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_provider_openai_spec_ts",
+      "community": 14,
+      "norm_label": "provider-openai.spec.ts"
+    },
+    {
+      "label": "baseConfig()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-openai.spec.ts",
+      "source_location": "L39",
+      "id": "provider_openai_spec_baseconfig",
+      "community": 14,
+      "norm_label": "baseconfig()"
+    },
+    {
+      "label": "usage()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-openai.spec.ts",
+      "source_location": "L47",
+      "id": "provider_openai_spec_usage",
+      "community": 14,
+      "norm_label": "usage()"
     },
     {
       "label": "providers-factory.spec.ts",
@@ -36,7 +90,7 @@
       "source_file": "test/unit/providers-factory.spec.ts",
       "source_location": "L1",
       "id": "test_unit_providers_factory_spec_ts",
-      "community": 7,
+      "community": 15,
       "norm_label": "providers-factory.spec.ts"
     },
     {
@@ -45,7 +99,7 @@
       "source_file": "test/unit/providers-factory.spec.ts",
       "source_location": "L17",
       "id": "providers_factory_spec_baseconfig",
-      "community": 7,
+      "community": 15,
       "norm_label": "baseconfig()"
     },
     {
@@ -54,7 +108,7 @@
       "source_file": "test/unit/providers-factory.spec.ts",
       "source_location": "L25",
       "id": "providers_factory_spec_stubprovider",
-      "community": 7,
+      "community": 15,
       "norm_label": "stubprovider()"
     },
     {
@@ -63,7 +117,7 @@
       "source_file": "test/unit/provider-anthropic.spec.ts",
       "source_location": "L1",
       "id": "test_unit_provider_anthropic_spec_ts",
-      "community": 8,
+      "community": 16,
       "norm_label": "provider-anthropic.spec.ts"
     },
     {
@@ -72,7 +126,7 @@
       "source_file": "test/unit/provider-anthropic.spec.ts",
       "source_location": "L34",
       "id": "provider_anthropic_spec_configwithkey",
-      "community": 8,
+      "community": 16,
       "norm_label": "configwithkey()"
     },
     {
@@ -81,8 +135,179 @@
       "source_file": "test/unit/provider-anthropic.spec.ts",
       "source_location": "L42",
       "id": "provider_anthropic_spec_configwithoutkey",
-      "community": 8,
+      "community": 16,
       "norm_label": "configwithoutkey()"
+    },
+    {
+      "label": "route-describe.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/route-describe.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_route_describe_spec_ts",
+      "community": 17,
+      "norm_label": "route-describe.spec.ts"
+    },
+    {
+      "label": "silentLogger()",
+      "file_type": "code",
+      "source_file": "test/unit/route-describe.spec.ts",
+      "source_location": "L27",
+      "id": "route_describe_spec_silentlogger",
+      "community": 17,
+      "norm_label": "silentlogger()"
+    },
+    {
+      "label": "makeRouter()",
+      "file_type": "code",
+      "source_file": "test/unit/route-describe.spec.ts",
+      "source_location": "L55",
+      "id": "route_describe_spec_makerouter",
+      "community": 17,
+      "norm_label": "makerouter()"
+    },
+    {
+      "label": "worker.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_worker_spec_ts",
+      "community": 6,
+      "norm_label": "worker.spec.ts"
+    },
+    {
+      "label": "makeStore()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L46",
+      "id": "worker_spec_makestore",
+      "community": 6,
+      "norm_label": "makestore()"
+    },
+    {
+      "label": "deliver()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L139",
+      "id": "worker_spec_deliver",
+      "community": 6,
+      "norm_label": "deliver()"
+    },
+    {
+      "label": "timeoutAllClaims()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L149",
+      "id": "worker_spec_timeoutallclaims",
+      "community": 6,
+      "norm_label": "timeoutallclaims()"
+    },
+    {
+      "label": "makeRecord()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L156",
+      "id": "worker_spec_makerecord",
+      "community": 6,
+      "norm_label": "makerecord()"
+    },
+    {
+      "label": "instantSleep()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L168",
+      "id": "worker_spec_instantsleep",
+      "community": 6,
+      "norm_label": "instantsleep()"
+    },
+    {
+      "label": "makeTasks()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L171",
+      "id": "worker_spec_maketasks",
+      "community": 6,
+      "norm_label": "maketasks()"
+    },
+    {
+      "label": "waitFor()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L183",
+      "id": "worker_spec_waitfor",
+      "community": 6,
+      "norm_label": "waitfor()"
+    },
+    {
+      "label": "sleepFn()",
+      "file_type": "code",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L524",
+      "id": "worker_spec_sleepfn",
+      "community": 6,
+      "norm_label": "sleepfn()"
+    },
+    {
+      "label": "provider-google.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/provider-google.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_provider_google_spec_ts",
+      "community": 21,
+      "norm_label": "provider-google.spec.ts"
+    },
+    {
+      "label": "baseConfig()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-google.spec.ts",
+      "source_location": "L43",
+      "id": "provider_google_spec_baseconfig",
+      "community": 21,
+      "norm_label": "baseconfig()"
+    },
+    {
+      "label": "provider-router.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_provider_router_spec_ts",
+      "community": 10,
+      "norm_label": "provider-router.spec.ts"
+    },
+    {
+      "label": "baseConfig()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L26",
+      "id": "provider_router_spec_baseconfig",
+      "community": 10,
+      "norm_label": "baseconfig()"
+    },
+    {
+      "label": "scriptedProvider()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L45",
+      "id": "provider_router_spec_scriptedprovider",
+      "community": 10,
+      "norm_label": "scriptedprovider()"
+    },
+    {
+      "label": "registryFactory()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L76",
+      "id": "provider_router_spec_registryfactory",
+      "community": 10,
+      "norm_label": "registryfactory()"
+    },
+    {
+      "label": "noSleep()",
+      "file_type": "code",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L86",
+      "id": "provider_router_spec_nosleep",
+      "community": 10,
+      "norm_label": "nosleep()"
     },
     {
       "label": "config.spec.ts",
@@ -90,7 +315,7 @@
       "source_file": "test/unit/config.spec.ts",
       "source_location": "L1",
       "id": "test_unit_config_spec_ts",
-      "community": 11,
+      "community": 22,
       "norm_label": "config.spec.ts"
     },
     {
@@ -99,7 +324,7 @@
       "source_file": "test/unit/config.spec.ts",
       "source_location": "L12",
       "id": "config_spec_issuesof",
-      "community": 11,
+      "community": 22,
       "norm_label": "issuesof()"
     },
     {
@@ -108,7 +333,7 @@
       "source_file": "test/unit/logger.spec.ts",
       "source_location": "L1",
       "id": "test_unit_logger_spec_ts",
-      "community": 9,
+      "community": 18,
       "norm_label": "logger.spec.ts"
     },
     {
@@ -117,7 +342,7 @@
       "source_file": "test/unit/logger.spec.ts",
       "source_location": "L9",
       "id": "logger_spec_capture",
-      "community": 9,
+      "community": 18,
       "norm_label": "capture()"
     },
     {
@@ -126,17 +351,8 @@
       "source_file": "test/unit/logger.spec.ts",
       "source_location": "L23",
       "id": "logger_spec_flush",
-      "community": 9,
+      "community": 18,
       "norm_label": "flush()"
-    },
-    {
-      "label": "errors.test.ts",
-      "file_type": "code",
-      "source_file": "test/unit/core/errors.test.ts",
-      "source_location": "L1",
-      "id": "test_unit_core_errors_test_ts",
-      "community": 15,
-      "norm_label": "errors.test.ts"
     },
     {
       "label": "image.spec.ts",
@@ -144,8 +360,26 @@
       "source_file": "test/unit/core/image.spec.ts",
       "source_location": "L1",
       "id": "test_unit_core_image_spec_ts",
-      "community": 16,
+      "community": 27,
       "norm_label": "image.spec.ts"
+    },
+    {
+      "label": "ocr.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/core/tasks/ocr.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_core_tasks_ocr_spec_ts",
+      "community": 12,
+      "norm_label": "ocr.spec.ts"
+    },
+    {
+      "label": "makeRouter()",
+      "file_type": "code",
+      "source_file": "test/unit/http/routes/ocr.spec.ts",
+      "source_location": "L43",
+      "id": "ocr_spec_makerouter",
+      "community": 12,
+      "norm_label": "makerouter()"
     },
     {
       "label": "schemas.spec.ts",
@@ -153,7 +387,7 @@
       "source_file": "test/unit/http/schemas.spec.ts",
       "source_location": "L1",
       "id": "test_unit_http_schemas_spec_ts",
-      "community": 17,
+      "community": 28,
       "norm_label": "schemas.spec.ts"
     },
     {
@@ -198,7 +432,7 @@
       "source_file": "test/unit/http/middleware/error.spec.ts",
       "source_location": "L1",
       "id": "test_unit_http_middleware_error_spec_ts",
-      "community": 3,
+      "community": 4,
       "norm_label": "error.spec.ts"
     },
     {
@@ -207,7 +441,7 @@
       "source_file": "test/unit/http/middleware/error.spec.ts",
       "source_location": "L22",
       "id": "error_spec_createlogger",
-      "community": 3,
+      "community": 4,
       "norm_label": "createlogger()"
     },
     {
@@ -216,7 +450,7 @@
       "source_file": "test/unit/http/middleware/error.spec.ts",
       "source_location": "L32",
       "id": "error_spec_buildapp",
-      "community": 3,
+      "community": 4,
       "norm_label": "buildapp()"
     },
     {
@@ -225,7 +459,7 @@
       "source_file": "test/unit/http/middleware/error.spec.ts",
       "source_location": "L122",
       "id": "error_spec_imagetoolargeerror",
-      "community": 3,
+      "community": 4,
       "norm_label": "imagetoolargeerror"
     },
     {
@@ -234,8 +468,26 @@
       "source_file": "test/unit/http/middleware/error.spec.ts",
       "source_location": "L123",
       "id": "error_spec_imagetoolargeerror_constructor",
-      "community": 3,
+      "community": 4,
       "norm_label": ".constructor()"
+    },
+    {
+      "label": "ocr.spec.ts",
+      "file_type": "code",
+      "source_file": "test/unit/http/routes/ocr.spec.ts",
+      "source_location": "L1",
+      "id": "test_unit_http_routes_ocr_spec_ts",
+      "community": 12,
+      "norm_label": "ocr.spec.ts"
+    },
+    {
+      "label": "silentLogger()",
+      "file_type": "code",
+      "source_file": "test/unit/http/routes/ocr.spec.ts",
+      "source_location": "L39",
+      "id": "ocr_spec_silentlogger",
+      "community": 12,
+      "norm_label": "silentlogger()"
     },
     {
       "label": "health.test.ts",
@@ -243,7 +495,7 @@
       "source_file": "test/unit/http/routes/health.test.ts",
       "source_location": "L1",
       "id": "test_unit_http_routes_health_test_ts",
-      "community": 18,
+      "community": 29,
       "norm_label": "health.test.ts"
     },
     {
@@ -259,7 +511,7 @@
       "label": "buildApp()",
       "file_type": "code",
       "source_file": "src/app.ts",
-      "source_location": "L68",
+      "source_location": "L80",
       "id": "app_buildapp",
       "community": 1,
       "norm_label": "buildapp()"
@@ -288,7 +540,7 @@
       "source_file": "src/index.ts",
       "source_location": "L1",
       "id": "src_index_ts",
-      "community": 19,
+      "community": 30,
       "norm_label": "index.ts"
     },
     {
@@ -297,7 +549,7 @@
       "source_file": "src/config.ts",
       "source_location": "L1",
       "id": "src_config_ts",
-      "community": 5,
+      "community": 11,
       "norm_label": "config.ts"
     },
     {
@@ -306,7 +558,7 @@
       "source_file": "src/config.ts",
       "source_location": "L28",
       "id": "config_splitcsv",
-      "community": 5,
+      "community": 11,
       "norm_label": "splitcsv()"
     },
     {
@@ -315,7 +567,7 @@
       "source_file": "src/config.ts",
       "source_location": "L34",
       "id": "config_intenv",
-      "community": 5,
+      "community": 11,
       "norm_label": "intenv()"
     },
     {
@@ -324,7 +576,7 @@
       "source_file": "src/config.ts",
       "source_location": "L124",
       "id": "config_stripempty",
-      "community": 5,
+      "community": 11,
       "norm_label": "stripempty()"
     },
     {
@@ -333,7 +585,7 @@
       "source_file": "src/config.ts",
       "source_location": "L132",
       "id": "config_loadconfig",
-      "community": 5,
+      "community": 11,
       "norm_label": "loadconfig()"
     },
     {
@@ -342,7 +594,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L1",
       "id": "src_core_image_ts",
-      "community": 2,
+      "community": 3,
       "norm_label": "image.ts"
     },
     {
@@ -351,7 +603,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L66",
       "id": "image_normalize",
-      "community": 2,
+      "community": 3,
       "norm_label": "normalize()"
     },
     {
@@ -360,7 +612,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L75",
       "id": "image_fromurl",
-      "community": 2,
+      "community": 3,
       "norm_label": "fromurl()"
     },
     {
@@ -369,7 +621,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L154",
       "id": "image_frombase64",
-      "community": 2,
+      "community": 3,
       "norm_label": "frombase64()"
     },
     {
@@ -378,7 +630,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L170",
       "id": "image_frombytes",
-      "community": 2,
+      "community": 3,
       "norm_label": "frombytes()"
     },
     {
@@ -387,7 +639,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L179",
       "id": "image_decodebase64",
-      "community": 2,
+      "community": 3,
       "norm_label": "decodebase64()"
     },
     {
@@ -396,7 +648,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L186",
       "id": "image_sniffmime",
-      "community": 2,
+      "community": 3,
       "norm_label": "sniffmime()"
     },
     {
@@ -405,7 +657,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L210",
       "id": "image_concatchunks",
-      "community": 2,
+      "community": 3,
       "norm_label": "concatchunks()"
     },
     {
@@ -414,7 +666,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L220",
       "id": "image_parsemimefromcontenttype",
-      "community": 2,
+      "community": 3,
       "norm_label": "parsemimefromcontenttype()"
     },
     {
@@ -423,7 +675,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L226",
       "id": "image_drain",
-      "community": 2,
+      "community": 3,
       "norm_label": "drain()"
     },
     {
@@ -432,7 +684,7 @@
       "source_file": "src/core/image.ts",
       "source_location": "L235",
       "id": "image_istimeouterror",
-      "community": 2,
+      "community": 3,
       "norm_label": "istimeouterror()"
     },
     {
@@ -661,12 +913,201 @@
       "norm_label": ".constructor()"
     },
     {
+      "label": "provider-router.ts",
+      "file_type": "code",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L1",
+      "id": "src_core_provider_router_ts",
+      "community": 2,
+      "norm_label": "provider-router.ts"
+    },
+    {
+      "label": "ProviderRouter",
+      "file_type": "code",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L106",
+      "id": "provider_router_providerrouter",
+      "community": 2,
+      "norm_label": "providerrouter"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L111",
+      "id": "provider_router_providerrouter_constructor",
+      "community": 2,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".call()",
+      "file_type": "code",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L121",
+      "id": "provider_router_providerrouter_call",
+      "community": 2,
+      "norm_label": ".call()"
+    },
+    {
+      "label": "toAttempt()",
+      "file_type": "code",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L171",
+      "id": "provider_router_toattempt",
+      "community": 2,
+      "norm_label": "toattempt()"
+    },
+    {
+      "label": "defaultSleep()",
+      "file_type": "code",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L181",
+      "id": "provider_router_defaultsleep",
+      "community": 2,
+      "norm_label": "defaultsleep()"
+    },
+    {
+      "label": "ocr.ts",
+      "file_type": "code",
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L1",
+      "id": "src_core_tasks_ocr_ts",
+      "community": 2,
+      "norm_label": "ocr.ts"
+    },
+    {
+      "label": "buildOcrPrompt()",
+      "file_type": "code",
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L101",
+      "id": "ocr_buildocrprompt",
+      "community": 2,
+      "norm_label": "buildocrprompt()"
+    },
+    {
+      "label": "runOcr()",
+      "file_type": "code",
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L108",
+      "id": "ocr_runocr",
+      "community": 2,
+      "norm_label": "runocr()"
+    },
+    {
+      "label": "describe.ts",
+      "file_type": "code",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L1",
+      "id": "src_core_tasks_describe_ts",
+      "community": 2,
+      "norm_label": "describe.ts"
+    },
+    {
+      "label": "runDescribe()",
+      "file_type": "code",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L107",
+      "id": "describe_rundescribe",
+      "community": 2,
+      "norm_label": "rundescribe()"
+    },
+    {
+      "label": "buildCallOptions()",
+      "file_type": "code",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L134",
+      "id": "describe_buildcalloptions",
+      "community": 2,
+      "norm_label": "buildcalloptions()"
+    },
+    {
+      "label": "coerceDescription()",
+      "file_type": "code",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L147",
+      "id": "describe_coercedescription",
+      "community": 2,
+      "norm_label": "coercedescription()"
+    },
+    {
+      "label": "bedrock.ts",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L1",
+      "id": "src_core_providers_bedrock_ts",
+      "community": 8,
+      "norm_label": "bedrock.ts"
+    },
+    {
+      "label": "buildOcrPrompt()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L56",
+      "id": "bedrock_buildocrprompt",
+      "community": 8,
+      "norm_label": "buildocrprompt()"
+    },
+    {
+      "label": "mapUsage()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L65",
+      "id": "bedrock_mapusage",
+      "community": 8,
+      "norm_label": "mapusage()"
+    },
+    {
+      "label": "buildSettings()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L75",
+      "id": "bedrock_buildsettings",
+      "community": 8,
+      "norm_label": "buildsettings()"
+    },
+    {
+      "label": "runDescribe()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L112",
+      "id": "bedrock_rundescribe",
+      "community": 8,
+      "norm_label": "rundescribe()"
+    },
+    {
+      "label": "runOcr()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L133",
+      "id": "bedrock_runocr",
+      "community": 8,
+      "norm_label": "runocr()"
+    },
+    {
+      "label": "runExtract()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L154",
+      "id": "bedrock_runextract",
+      "community": 8,
+      "norm_label": "runextract()"
+    },
+    {
+      "label": "createBedrockProvider()",
+      "file_type": "code",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L191",
+      "id": "bedrock_createbedrockprovider",
+      "community": 8,
+      "norm_label": "createbedrockprovider()"
+    },
+    {
       "label": "anthropic.ts",
       "file_type": "code",
       "source_file": "src/core/providers/anthropic.ts",
       "source_location": "L1",
       "id": "src_core_providers_anthropic_ts",
-      "community": 12,
+      "community": 23,
       "norm_label": "anthropic.ts"
     },
     {
@@ -675,8 +1116,98 @@
       "source_file": "src/core/providers/anthropic.ts",
       "source_location": "L73",
       "id": "anthropic_buildanthropicprovider",
-      "community": 12,
+      "community": 23,
       "norm_label": "buildanthropicprovider()"
+    },
+    {
+      "label": "openai.ts",
+      "file_type": "code",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L1",
+      "id": "src_core_providers_openai_ts",
+      "community": 5,
+      "norm_label": "openai.ts"
+    },
+    {
+      "label": "buildOcrPrompt()",
+      "file_type": "code",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L56",
+      "id": "openai_buildocrprompt",
+      "community": 5,
+      "norm_label": "buildocrprompt()"
+    },
+    {
+      "label": "buildImageMessage()",
+      "file_type": "code",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L66",
+      "id": "openai_buildimagemessage",
+      "community": 5,
+      "norm_label": "buildimagemessage()"
+    },
+    {
+      "label": "normalizeUsage()",
+      "file_type": "code",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L75",
+      "id": "openai_normalizeusage",
+      "community": 5,
+      "norm_label": "normalizeusage()"
+    },
+    {
+      "label": "withAbortSignal()",
+      "file_type": "code",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L90",
+      "id": "openai_withabortsignal",
+      "community": 5,
+      "norm_label": "withabortsignal()"
+    },
+    {
+      "label": "buildOpenAiProvider()",
+      "file_type": "code",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L97",
+      "id": "openai_buildopenaiprovider",
+      "community": 5,
+      "norm_label": "buildopenaiprovider()"
+    },
+    {
+      "label": "google.ts",
+      "file_type": "code",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L1",
+      "id": "src_core_providers_google_ts",
+      "community": 13,
+      "norm_label": "google.ts"
+    },
+    {
+      "label": "toUsage()",
+      "file_type": "code",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L64",
+      "id": "google_tousage",
+      "community": 13,
+      "norm_label": "tousage()"
+    },
+    {
+      "label": "buildMessages()",
+      "file_type": "code",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L79",
+      "id": "google_buildmessages",
+      "community": 13,
+      "norm_label": "buildmessages()"
+    },
+    {
+      "label": "googleProviderBuilder()",
+      "file_type": "code",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L97",
+      "id": "google_googleproviderbuilder",
+      "community": 13,
+      "norm_label": "googleproviderbuilder()"
     },
     {
       "label": "index.ts",
@@ -684,34 +1215,34 @@
       "source_file": "src/core/providers/index.ts",
       "source_location": "L1",
       "id": "src_core_providers_index_ts",
-      "community": 6,
+      "community": 5,
       "norm_label": "index.ts"
     },
     {
       "label": "registerProvider()",
       "file_type": "code",
       "source_file": "src/core/providers/index.ts",
-      "source_location": "L132",
+      "source_location": "L137",
       "id": "index_registerprovider",
-      "community": 6,
+      "community": 5,
       "norm_label": "registerprovider()"
     },
     {
       "label": "createProvider()",
       "file_type": "code",
       "source_file": "src/core/providers/index.ts",
-      "source_location": "L142",
+      "source_location": "L147",
       "id": "index_createprovider",
-      "community": 6,
+      "community": 5,
       "norm_label": "createprovider()"
     },
     {
       "label": "_resetProviderRegistryForTests()",
       "file_type": "code",
       "source_file": "src/core/providers/index.ts",
-      "source_location": "L160",
+      "source_location": "L165",
       "id": "index_resetproviderregistryfortests",
-      "community": 6,
+      "community": 5,
       "norm_label": "_resetproviderregistryfortests()"
     },
     {
@@ -720,7 +1251,7 @@
       "source_file": "src/http/schemas.ts",
       "source_location": "L1",
       "id": "src_http_schemas_ts",
-      "community": 13,
+      "community": 24,
       "norm_label": "schemas.ts"
     },
     {
@@ -729,7 +1260,7 @@
       "source_file": "src/http/schemas.ts",
       "source_location": "L93",
       "id": "schemas_enforceextractxor",
-      "community": 13,
+      "community": 24,
       "norm_label": "enforceextractxor()"
     },
     {
@@ -774,7 +1305,7 @@
       "source_file": "src/http/middleware/error.ts",
       "source_location": "L1",
       "id": "src_http_middleware_error_ts",
-      "community": 3,
+      "community": 4,
       "norm_label": "error.ts"
     },
     {
@@ -783,7 +1314,7 @@
       "source_file": "src/http/middleware/error.ts",
       "source_location": "L50",
       "id": "error_createerrorhandler",
-      "community": 3,
+      "community": 4,
       "norm_label": "createerrorhandler()"
     },
     {
@@ -792,7 +1323,7 @@
       "source_file": "src/http/middleware/error.ts",
       "source_location": "L83",
       "id": "error_buildenvelope",
-      "community": 3,
+      "community": 4,
       "norm_label": "buildenvelope()"
     },
     {
@@ -801,7 +1332,7 @@
       "source_file": "src/http/middleware/error.ts",
       "source_location": "L97",
       "id": "error_getrequestid",
-      "community": 3,
+      "community": 4,
       "norm_label": "getrequestid()"
     },
     {
@@ -810,8 +1341,35 @@
       "source_file": "src/http/middleware/error.ts",
       "source_location": "L111",
       "id": "error_serializeerror",
-      "community": 3,
+      "community": 4,
       "norm_label": "serializeerror()"
+    },
+    {
+      "label": "ocr.ts",
+      "file_type": "code",
+      "source_file": "src/http/routes/ocr.ts",
+      "source_location": "L1",
+      "id": "src_http_routes_ocr_ts",
+      "community": 1,
+      "norm_label": "ocr.ts"
+    },
+    {
+      "label": "createOcrRoute()",
+      "file_type": "code",
+      "source_file": "src/http/routes/ocr.ts",
+      "source_location": "L31",
+      "id": "ocr_createocrroute",
+      "community": 1,
+      "norm_label": "createocrroute()"
+    },
+    {
+      "label": "readJson()",
+      "file_type": "code",
+      "source_file": "src/http/routes/ocr.ts",
+      "source_location": "L91",
+      "id": "ocr_readjson",
+      "community": 1,
+      "norm_label": "readjson()"
     },
     {
       "label": "health.ts",
@@ -832,6 +1390,105 @@
       "norm_label": "createhealthroute()"
     },
     {
+      "label": "describe.ts",
+      "file_type": "code",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L1",
+      "id": "src_http_routes_describe_ts",
+      "community": 1,
+      "norm_label": "describe.ts"
+    },
+    {
+      "label": "createDescribeRoute()",
+      "file_type": "code",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L46",
+      "id": "describe_createdescriberoute",
+      "community": 1,
+      "norm_label": "createdescriberoute()"
+    },
+    {
+      "label": "parseBody()",
+      "file_type": "code",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L92",
+      "id": "describe_parsebody",
+      "community": 1,
+      "norm_label": "parsebody()"
+    },
+    {
+      "label": "extractProviderOptions()",
+      "file_type": "code",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L115",
+      "id": "describe_extractprovideroptions",
+      "community": 1,
+      "norm_label": "extractprovideroptions()"
+    },
+    {
+      "label": "isAbortLike()",
+      "file_type": "code",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L126",
+      "id": "describe_isabortlike",
+      "community": 1,
+      "norm_label": "isabortlike()"
+    },
+    {
+      "label": "worker.ts",
+      "file_type": "code",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L1",
+      "id": "src_jobs_worker_ts",
+      "community": 9,
+      "norm_label": "worker.ts"
+    },
+    {
+      "label": "startWorkers()",
+      "file_type": "code",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L159",
+      "id": "worker_startworkers",
+      "community": 9,
+      "norm_label": "startworkers()"
+    },
+    {
+      "label": "UnknownTaskError",
+      "file_type": "code",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L288",
+      "id": "worker_unknowntaskerror",
+      "community": 9,
+      "norm_label": "unknowntaskerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L290",
+      "id": "worker_unknowntaskerror_constructor",
+      "community": 9,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "toErrorPayload()",
+      "file_type": "code",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L296",
+      "id": "worker_toerrorpayload",
+      "community": 9,
+      "norm_label": "toerrorpayload()"
+    },
+    {
+      "label": "defaultSleep()",
+      "file_type": "code",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L309",
+      "id": "worker_defaultsleep",
+      "community": 9,
+      "norm_label": "defaultsleep()"
+    },
+    {
       "label": "Retina",
       "file_type": "document",
       "source_file": "README.md",
@@ -840,7 +1497,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "retina",
       "id": "README_retina"
     },
@@ -853,7 +1510,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "self-hostable image understanding api",
       "id": "README_self_hostable_image_understanding_api"
     },
@@ -866,7 +1523,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "bring your own llm keys",
       "id": "README_bring_your_own_llm_keys"
     },
@@ -879,7 +1536,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "bedrock endpoint",
       "id": "README_bedrock_endpoint"
     },
@@ -892,7 +1549,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "sensing layer for your app",
       "id": "README_sensing_layer_for_your_app"
     },
@@ -905,7 +1562,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "image-to-text api",
       "id": "README_image_to_text_api"
     },
@@ -918,7 +1575,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "your own vpc",
       "id": "README_your_own_vpc"
     },
@@ -931,7 +1588,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "drop-in api service for image understanding",
       "id": "README_drop_in_api_service"
     },
@@ -944,12 +1601,24 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 7,
       "norm_label": "image understanding",
       "id": "README_image_understanding"
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-bedrock.spec.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_src": "test_unit_provider_bedrock_spec_ts",
+      "_tgt": "provider_bedrock_spec_baseconfig",
+      "source": "test_unit_provider_bedrock_spec_ts",
+      "target": "provider_bedrock_spec_baseconfig",
+      "confidence_score": 1.0
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -960,6 +1629,30 @@
       "_tgt": "app_compose_spec_silentlogger",
       "source": "test_unit_app_compose_spec_ts",
       "target": "app_compose_spec_silentlogger",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-openai.spec.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "test_unit_provider_openai_spec_ts",
+      "_tgt": "provider_openai_spec_baseconfig",
+      "source": "test_unit_provider_openai_spec_ts",
+      "target": "provider_openai_spec_baseconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-openai.spec.ts",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "test_unit_provider_openai_spec_ts",
+      "_tgt": "provider_openai_spec_usage",
+      "source": "test_unit_provider_openai_spec_ts",
+      "target": "provider_openai_spec_usage",
       "confidence_score": 1.0
     },
     {
@@ -1013,6 +1706,186 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "test/unit/route-describe.spec.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "test_unit_route_describe_spec_ts",
+      "_tgt": "route_describe_spec_silentlogger",
+      "source": "test_unit_route_describe_spec_ts",
+      "target": "route_describe_spec_silentlogger",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/route-describe.spec.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "test_unit_route_describe_spec_ts",
+      "_tgt": "route_describe_spec_makerouter",
+      "source": "test_unit_route_describe_spec_ts",
+      "target": "route_describe_spec_makerouter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_makestore",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_makestore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L139",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_deliver",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_deliver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_timeoutallclaims",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_timeoutallclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L156",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_makerecord",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_makerecord",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L168",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_instantsleep",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_instantsleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_maketasks",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_maketasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L183",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_waitfor",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_waitfor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/worker.spec.ts",
+      "source_location": "L524",
+      "weight": 1.0,
+      "_src": "test_unit_worker_spec_ts",
+      "_tgt": "worker_spec_sleepfn",
+      "source": "test_unit_worker_spec_ts",
+      "target": "worker_spec_sleepfn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-google.spec.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "test_unit_provider_google_spec_ts",
+      "_tgt": "provider_google_spec_baseconfig",
+      "source": "test_unit_provider_google_spec_ts",
+      "target": "provider_google_spec_baseconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "test_unit_provider_router_spec_ts",
+      "_tgt": "provider_router_spec_baseconfig",
+      "source": "test_unit_provider_router_spec_ts",
+      "target": "provider_router_spec_baseconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "test_unit_provider_router_spec_ts",
+      "_tgt": "provider_router_spec_scriptedprovider",
+      "source": "test_unit_provider_router_spec_ts",
+      "target": "provider_router_spec_scriptedprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_src": "test_unit_provider_router_spec_ts",
+      "_tgt": "provider_router_spec_registryfactory",
+      "source": "test_unit_provider_router_spec_ts",
+      "target": "provider_router_spec_registryfactory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/provider-router.spec.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "test_unit_provider_router_spec_ts",
+      "_tgt": "provider_router_spec_nosleep",
+      "source": "test_unit_provider_router_spec_ts",
+      "target": "provider_router_spec_nosleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "test/unit/config.spec.ts",
       "source_location": "L12",
       "weight": 1.0,
@@ -1044,6 +1917,30 @@
       "_tgt": "logger_spec_flush",
       "source": "test_unit_logger_spec_ts",
       "target": "logger_spec_flush",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/core/tasks/ocr.spec.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "test_unit_core_tasks_ocr_spec_ts",
+      "_tgt": "ocr_spec_makerouter",
+      "source": "test_unit_core_tasks_ocr_spec_ts",
+      "target": "ocr_spec_makerouter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/routes/ocr.spec.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "test_unit_http_routes_ocr_spec_ts",
+      "_tgt": "ocr_spec_makerouter",
+      "source": "ocr_spec_makerouter",
+      "target": "test_unit_http_routes_ocr_spec_ts",
       "confidence_score": 1.0
     },
     {
@@ -1157,8 +2054,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "test/unit/http/routes/ocr.spec.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "test_unit_http_routes_ocr_spec_ts",
+      "_tgt": "ocr_spec_silentlogger",
+      "source": "test_unit_http_routes_ocr_spec_ts",
+      "target": "ocr_spec_silentlogger",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/app.ts",
-      "source_location": "L68",
+      "source_location": "L80",
       "weight": 1.0,
       "_src": "src_app_ts",
       "_tgt": "app_buildapp",
@@ -1213,6 +2122,30 @@
       "_tgt": "health_createhealthroute",
       "source": "app_buildapp",
       "target": "health_createhealthroute"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "describe_createdescriberoute",
+      "source": "app_buildapp",
+      "target": "describe_createdescriberoute"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/app.ts",
+      "source_location": "L104",
+      "weight": 1.0,
+      "_src": "app_buildapp",
+      "_tgt": "ocr_createocrroute",
+      "source": "app_buildapp",
+      "target": "ocr_createocrroute"
     },
     {
       "relation": "calls",
@@ -1829,6 +2762,342 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_src": "src_core_provider_router_ts",
+      "_tgt": "provider_router_providerrouter",
+      "source": "src_core_provider_router_ts",
+      "target": "provider_router_providerrouter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_src": "src_core_provider_router_ts",
+      "_tgt": "provider_router_toattempt",
+      "source": "src_core_provider_router_ts",
+      "target": "provider_router_toattempt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L181",
+      "weight": 1.0,
+      "_src": "src_core_provider_router_ts",
+      "_tgt": "provider_router_defaultsleep",
+      "source": "src_core_provider_router_ts",
+      "target": "provider_router_defaultsleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_src": "provider_router_providerrouter",
+      "_tgt": "provider_router_providerrouter_constructor",
+      "source": "provider_router_providerrouter",
+      "target": "provider_router_providerrouter_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_src": "provider_router_providerrouter",
+      "_tgt": "provider_router_providerrouter_call",
+      "source": "provider_router_providerrouter",
+      "target": "provider_router_providerrouter_call",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/provider-router.ts",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_src": "provider_router_providerrouter_call",
+      "_tgt": "provider_router_toattempt",
+      "source": "provider_router_providerrouter_call",
+      "target": "provider_router_toattempt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_src": "ocr_runocr",
+      "_tgt": "provider_router_providerrouter_call",
+      "source": "provider_router_providerrouter_call",
+      "target": "ocr_runocr"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L123",
+      "weight": 1.0,
+      "_src": "describe_rundescribe",
+      "_tgt": "provider_router_providerrouter_call",
+      "source": "provider_router_providerrouter_call",
+      "target": "describe_rundescribe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_src": "src_core_tasks_ocr_ts",
+      "_tgt": "ocr_buildocrprompt",
+      "source": "src_core_tasks_ocr_ts",
+      "target": "ocr_buildocrprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_src": "src_core_tasks_ocr_ts",
+      "_tgt": "ocr_runocr",
+      "source": "src_core_tasks_ocr_ts",
+      "target": "ocr_runocr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/ocr.ts",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_src": "ocr_runocr",
+      "_tgt": "ocr_buildocrprompt",
+      "source": "ocr_buildocrprompt",
+      "target": "ocr_runocr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "src_core_tasks_describe_ts",
+      "_tgt": "describe_rundescribe",
+      "source": "src_core_tasks_describe_ts",
+      "target": "describe_rundescribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "_src": "src_core_tasks_describe_ts",
+      "_tgt": "describe_buildcalloptions",
+      "source": "src_core_tasks_describe_ts",
+      "target": "describe_buildcalloptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L147",
+      "weight": 1.0,
+      "_src": "src_core_tasks_describe_ts",
+      "_tgt": "describe_coercedescription",
+      "source": "src_core_tasks_describe_ts",
+      "target": "describe_coercedescription",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_src": "describe_rundescribe",
+      "_tgt": "describe_buildcalloptions",
+      "source": "describe_rundescribe",
+      "target": "describe_buildcalloptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/tasks/describe.ts",
+      "source_location": "L127",
+      "weight": 1.0,
+      "_src": "describe_rundescribe",
+      "_tgt": "describe_coercedescription",
+      "source": "describe_rundescribe",
+      "target": "describe_coercedescription",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_buildocrprompt",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_buildocrprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_mapusage",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_mapusage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_buildsettings",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_buildsettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_rundescribe",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_rundescribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_runocr",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_runocr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L154",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_runextract",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_runextract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L191",
+      "weight": 1.0,
+      "_src": "src_core_providers_bedrock_ts",
+      "_tgt": "bedrock_createbedrockprovider",
+      "source": "src_core_providers_bedrock_ts",
+      "target": "bedrock_createbedrockprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L144",
+      "weight": 1.0,
+      "_src": "bedrock_runocr",
+      "_tgt": "bedrock_buildocrprompt",
+      "source": "bedrock_buildocrprompt",
+      "target": "bedrock_runocr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L130",
+      "weight": 1.0,
+      "_src": "bedrock_rundescribe",
+      "_tgt": "bedrock_mapusage",
+      "source": "bedrock_mapusage",
+      "target": "bedrock_rundescribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_src": "bedrock_runocr",
+      "_tgt": "bedrock_mapusage",
+      "source": "bedrock_mapusage",
+      "target": "bedrock_runocr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L183",
+      "weight": 1.0,
+      "_src": "bedrock_runextract",
+      "_tgt": "bedrock_mapusage",
+      "source": "bedrock_mapusage",
+      "target": "bedrock_runextract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/bedrock.ts",
+      "source_location": "L192",
+      "weight": 1.0,
+      "_src": "bedrock_createbedrockprovider",
+      "_tgt": "bedrock_buildsettings",
+      "source": "bedrock_buildsettings",
+      "target": "bedrock_createbedrockprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/core/providers/anthropic.ts",
       "source_location": "L73",
       "weight": 1.0,
@@ -1839,10 +3108,118 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "src_core_providers_openai_ts",
+      "_tgt": "src_core_providers_index_ts",
+      "source": "src_core_providers_openai_ts",
+      "target": "src_core_providers_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "src_core_providers_openai_ts",
+      "_tgt": "openai_buildocrprompt",
+      "source": "src_core_providers_openai_ts",
+      "target": "openai_buildocrprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_src": "src_core_providers_openai_ts",
+      "_tgt": "openai_buildimagemessage",
+      "source": "src_core_providers_openai_ts",
+      "target": "openai_buildimagemessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "src_core_providers_openai_ts",
+      "_tgt": "openai_normalizeusage",
+      "source": "src_core_providers_openai_ts",
+      "target": "openai_normalizeusage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_src": "src_core_providers_openai_ts",
+      "_tgt": "openai_withabortsignal",
+      "source": "src_core_providers_openai_ts",
+      "target": "openai_withabortsignal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/openai.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "src_core_providers_openai_ts",
+      "_tgt": "openai_buildopenaiprovider",
+      "source": "src_core_providers_openai_ts",
+      "target": "openai_buildopenaiprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "src_core_providers_google_ts",
+      "_tgt": "google_tousage",
+      "source": "src_core_providers_google_ts",
+      "target": "google_tousage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "src_core_providers_google_ts",
+      "_tgt": "google_buildmessages",
+      "source": "src_core_providers_google_ts",
+      "target": "google_buildmessages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/core/providers/google.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "src_core_providers_google_ts",
+      "_tgt": "google_googleproviderbuilder",
+      "source": "src_core_providers_google_ts",
+      "target": "google_googleproviderbuilder",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/core/providers/index.ts",
-      "source_location": "L132",
+      "source_location": "L137",
       "weight": 1.0,
       "_src": "src_core_providers_index_ts",
       "_tgt": "index_registerprovider",
@@ -1854,7 +3231,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/core/providers/index.ts",
-      "source_location": "L142",
+      "source_location": "L147",
       "weight": 1.0,
       "_src": "src_core_providers_index_ts",
       "_tgt": "index_createprovider",
@@ -1866,7 +3243,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/core/providers/index.ts",
-      "source_location": "L160",
+      "source_location": "L165",
       "weight": 1.0,
       "_src": "src_core_providers_index_ts",
       "_tgt": "index_resetproviderregistryfortests",
@@ -1961,6 +3338,30 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/ocr.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "src_http_routes_ocr_ts",
+      "_tgt": "ocr_createocrroute",
+      "source": "src_http_routes_ocr_ts",
+      "target": "ocr_createocrroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/ocr.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "src_http_routes_ocr_ts",
+      "_tgt": "ocr_readjson",
+      "source": "src_http_routes_ocr_ts",
+      "target": "ocr_readjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/http/routes/health.ts",
       "source_location": "L25",
       "weight": 1.0,
@@ -1968,6 +3369,114 @@
       "_tgt": "health_createhealthroute",
       "source": "src_http_routes_health_ts",
       "target": "health_createhealthroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "src_http_routes_describe_ts",
+      "_tgt": "describe_createdescriberoute",
+      "source": "src_http_routes_describe_ts",
+      "target": "describe_createdescriberoute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "src_http_routes_describe_ts",
+      "_tgt": "describe_parsebody",
+      "source": "src_http_routes_describe_ts",
+      "target": "describe_parsebody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L115",
+      "weight": 1.0,
+      "_src": "src_http_routes_describe_ts",
+      "_tgt": "describe_extractprovideroptions",
+      "source": "src_http_routes_describe_ts",
+      "target": "describe_extractprovideroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/http/routes/describe.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_src": "src_http_routes_describe_ts",
+      "_tgt": "describe_isabortlike",
+      "source": "src_http_routes_describe_ts",
+      "target": "describe_isabortlike",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_src": "src_jobs_worker_ts",
+      "_tgt": "worker_startworkers",
+      "source": "src_jobs_worker_ts",
+      "target": "worker_startworkers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L288",
+      "weight": 1.0,
+      "_src": "src_jobs_worker_ts",
+      "_tgt": "worker_unknowntaskerror",
+      "source": "src_jobs_worker_ts",
+      "target": "worker_unknowntaskerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L296",
+      "weight": 1.0,
+      "_src": "src_jobs_worker_ts",
+      "_tgt": "worker_toerrorpayload",
+      "source": "src_jobs_worker_ts",
+      "target": "worker_toerrorpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L309",
+      "weight": 1.0,
+      "_src": "src_jobs_worker_ts",
+      "_tgt": "worker_defaultsleep",
+      "source": "src_jobs_worker_ts",
+      "target": "worker_defaultsleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/jobs/worker.ts",
+      "source_location": "L290",
+      "weight": 1.0,
+      "_src": "worker_unknowntaskerror",
+      "_tgt": "worker_unknowntaskerror_constructor",
+      "source": "worker_unknowntaskerror",
+      "target": "worker_unknowntaskerror_constructor",
       "confidence_score": 1.0
     },
     {
