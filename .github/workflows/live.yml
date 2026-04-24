@@ -1,0 +1,74 @@
+name: live
+
+# Nightly live-integration run against real provider APIs. Unlike ci.yml
+# (unit/replay/e2e with mocked providers), this workflow exercises the
+# live/ test layer from the testing ladder (constitution §Testing ladder)
+# by running `INTEGRATION=1 pnpm test:live`.
+#
+# Per R21, each test uses `describe.skipIf(!process.env.INTEGRATION ||
+# !process.env.<PROVIDER_KEY>)` so providers whose credentials are missing
+# from repository secrets are SKIPPED (vitest exit code 0) — they do not
+# fail the job. The job fails only when a present-credential provider's
+# live smoke test actually fails.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 06:00 UTC nightly
+    - cron: "0 6 * * *"
+
+# Prevent overlapping nightly runs (e.g. a long run spilling past 24h) and
+# let a manual dispatch supersede a pending scheduled run.
+concurrency:
+  group: live-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # Required for AWS role assumption via OIDC
+  # (aws-actions/configure-aws-credentials with `role-to-assume`).
+  id-token: write
+
+jobs:
+  live:
+    name: live integration (real providers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure AWS credentials (OIDC)
+        # Only attempt OIDC role assumption when the org/repo has provisioned
+        # AWS_ROLE_TO_ASSUME. Bedrock smoke tests skip themselves (R21) when
+        # AWS env vars are absent, so skipping this step on unconfigured
+        # forks is safe and does not fail the job.
+        if: ${{ vars.AWS_ROLE_TO_ASSUME != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-session-name: retina-live-${{ github.run_id }}
+
+      - name: Run live integration tests
+        env:
+          INTEGRATION: '1'
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+        run: pnpm test:live

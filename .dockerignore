@@ -1,0 +1,32 @@
+# Build artifacts
+node_modules/
+dist/
+coverage/
+.vitest-cache/
+
+# Tests and docs — never shipped in the image
+test/
+docs/
+graphify-out/
+
+# VCS + CI metadata
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# Ralph control files (protected; never inside the image)
+.ralph/
+.ralphrc
+
+# Editor / tooling caches
+.claude/
+.codex/
+.devin/
+.DS_Store
+*.log
+
+# Env files (secrets must be passed at runtime)
+.env
+.env.*
+!.env.example
