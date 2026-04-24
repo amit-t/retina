@@ -19,6 +19,10 @@
  *   - src/http/routes/extract.ts         (POST /v1/extract — mounted only when
  *                                          both `deps.router` AND
  *                                          `deps.templates` are supplied)
+ *   - src/http/routes/templates.ts       (GET /v1/templates, GET /v1/templates/:id
+ *                                          — template catalog; mounted only when
+ *                                          `deps.templates` exposes `list()`, i.e.
+ *                                          the R10 registry; R12a)
  *   - src/http/routes/analyze.ts         (POST /v1/analyze — unified task
  *                                          endpoint; mounted only when
  *                                          `deps.router` is supplied)
@@ -30,6 +34,7 @@
 import { Hono } from 'hono';
 import type { TaskRouter } from './core/tasks/describe';
 import type { TemplateRegistry } from './core/tasks/extract';
+import type { TemplateRegistry as FullTemplateRegistry } from './core/templates';
 import { createErrorHandler, type ErrorMiddlewareLogger } from './http/middleware/error';
 import { type RequestIdVariables, requestId } from './http/middleware/request-id';
 import { sizeLimit } from './http/middleware/size-limit';
@@ -39,6 +44,7 @@ import { createExtractRoute } from './http/routes/extract';
 import { createHealthRoute, type RedisStatusProbe } from './http/routes/health';
 import { createJobsRoute, createJobsStreamRoute } from './http/routes/jobs';
 import { createOcrRoute } from './http/routes/ocr';
+import { createTemplatesRoute } from './http/routes/templates';
 import type { StreamJobStore } from './jobs/sse';
 import type { JobStore } from './jobs/store';
 import { buildLogger, type Logger } from './logger';
@@ -86,6 +92,20 @@ export interface BuildAppDeps {
    *  from the connection `status`. R13 wires the real ioredis instance;
    *  omission leaves the health route reporting `redis: "down"`. */
   redis?: RedisStatusProbe;
+}
+
+/**
+ * Structural predicate: does the supplied registry expose the R10
+ * `list()` method? The structural `TemplateRegistry` from `core/tasks/
+ * extract.ts` only mandates `get()`; the R10 loader returns a registry
+ * with both `list()` and a fuller `get()`. Mount the `/v1/templates`
+ * catalog only when that fuller surface is present so narrower test
+ * doubles remain zero-wiring.
+ */
+function hasListMethod(
+  registry: TemplateRegistry,
+): registry is TemplateRegistry & Pick<FullTemplateRegistry, 'list'> {
+  return typeof (registry as { list?: unknown }).list === 'function';
 }
 
 /**
@@ -186,6 +206,17 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
         config: { MAX_IMAGE_BYTES: maxBytes, REQUEST_TIMEOUT_MS: requestTimeoutMs },
         ...(deps.templates !== undefined ? { templates: deps.templates } : {}),
       }),
+    );
+  }
+  // Templates catalog (R12a) — provider-independent: mount as long as the
+  // supplied registry exposes the full R10 surface (`list()` + fuller
+  // `get()`). Test harnesses that pass a narrower `{get}`-only double
+  // (route-extract.spec, analyze spec) silently skip this route so their
+  // wiring remains zero-router.
+  if (deps.templates !== undefined && hasListMethod(deps.templates)) {
+    app.route(
+      '/',
+      createTemplatesRoute({ templates: deps.templates as unknown as FullTemplateRegistry }),
     );
   }
   if (deps.jobStore !== undefined) {
