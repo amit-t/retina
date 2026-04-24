@@ -20,8 +20,15 @@
 import { Hono } from 'hono';
 import { JobNotFoundError, ValidationError } from '../../core/errors.js';
 import { type NormalizeInput, normalize } from '../../core/image.js';
-import type { JobEnqueueInput, JobStore } from '../../jobs/store.js';
-import { type JobRecordResponse, type JobsEnqueueResponse, JobsRequest } from '../schemas.js';
+import type { EnqueueInput, JobPayload, JobStore } from '../../jobs/store.js';
+import type {
+  DescribeResponse,
+  ExtractResponse,
+  JobRecordResponse,
+  JobsEnqueueResponse,
+  OcrResponse,
+} from '../schemas.js';
+import { JobsRequest } from '../schemas.js';
 
 export interface JobsRouteDeps {
   store: JobStore;
@@ -70,7 +77,10 @@ export function createJobsRoute(deps: JobsRouteDeps): Hono {
 
     const response: JobsEnqueueResponse = {
       jobId: result.jobId,
-      status: result.status,
+      // A freshly-enqueued job is always `queued` by the store contract
+      // (see `JobStore.enqueue` — sets `status: 'queued'`). The envelope
+      // type narrows the wider `JobStatus` to the literal for callers.
+      status: 'queued',
     };
     return c.json(response, 202);
   });
@@ -82,13 +92,18 @@ export function createJobsRoute(deps: JobsRouteDeps): Hono {
       throw new JobNotFoundError('Job not found', { details: { jobId: id } });
     }
 
+    // The store persists `result` as `unknown` (round-tripped JSON) so it
+    // can hold any of the task response shapes. Callers of this route see
+    // one of `DescribeResponse | OcrResponse | ExtractResponse | null`; we
+    // narrow here rather than validating — the worker is the only writer
+    // and it always writes one of those shapes (spec §Data flow › Async).
     const response: JobRecordResponse = {
       jobId: record.jobId,
       status: record.status,
       attempts: record.attempts,
       createdAt: record.createdAt,
       completedAt: record.completedAt,
-      result: record.result,
+      result: record.result as DescribeResponse | OcrResponse | ExtractResponse | null,
       error: record.error,
     };
     return c.json(response);
@@ -98,42 +113,44 @@ export function createJobsRoute(deps: JobsRouteDeps): Hono {
 }
 
 /**
- * Translate the validated `JobsRequest` into the worker-ready
- * `JobEnqueueInput`. Task-specific fields are only set when present so
- * the payload round-trips cleanly through Redis (no `undefined` → `null`
- * drift). Provider / callback fields follow the same rule.
+ * Translate the validated `JobsRequest` into the store-ready
+ * `EnqueueInput`. The canonical `JobStore` (R14) wraps the actual job
+ * shape inside `{ payload }` where `payload` carries the `task`
+ * discriminator + task-specific fields + shared provider/callback options.
+ * Only fields present on the request are copied so the Redis round-trip
+ * doesn't drift `undefined` → `null`.
  */
 function buildEnqueueInput(
   body: ReturnType<typeof JobsRequest.parse>,
   bytes: Uint8Array,
   mime: string,
-): JobEnqueueInput {
-  const input: JobEnqueueInput = {
+): EnqueueInput {
+  const payload: JobPayload = {
     task: body.task,
     image: { bytes, mime },
   };
 
   // Task-specific fields by discriminator.
   if (body.task === 'describe') {
-    if (body.prompt !== undefined) input.prompt = body.prompt;
-    if (body.maxTokens !== undefined) input.maxTokens = body.maxTokens;
+    if (body.prompt !== undefined) payload.prompt = body.prompt;
+    if (body.maxTokens !== undefined) payload.maxTokens = body.maxTokens;
   } else if (body.task === 'ocr') {
-    if (body.languages !== undefined) input.languages = body.languages;
+    if (body.languages !== undefined) payload.languages = body.languages;
   } else {
     // extract — XOR already enforced by the schema; forward whichever
     // side the caller supplied so the worker resolves the JsonSchema.
-    if (body.schema !== undefined) input.schema = body.schema;
-    if (body.templateId !== undefined) input.templateId = body.templateId;
+    if (body.schema !== undefined) payload.schema = body.schema;
+    if (body.templateId !== undefined) payload.templateId = body.templateId;
   }
 
   // Shared: provider options (replace-semantics) + optional callback.
-  if (body.provider !== undefined) input.provider = body.provider;
-  if (body.model !== undefined) input.model = body.model;
-  if (body.fallback !== undefined) input.fallback = body.fallback;
-  if (body.retries !== undefined) input.retries = body.retries;
-  if (body.callbackUrl !== undefined) input.callbackUrl = body.callbackUrl;
+  if (body.provider !== undefined) payload.provider = body.provider;
+  if (body.model !== undefined) payload.model = body.model;
+  if (body.fallback !== undefined) payload.fallback = body.fallback;
+  if (body.retries !== undefined) payload.retries = body.retries;
+  if (body.callbackUrl !== undefined) payload.callbackUrl = body.callbackUrl;
 
-  return input;
+  return { payload };
 }
 
 /**

@@ -27,12 +27,7 @@ import type {
   JobRecordResponse,
   JobsEnqueueResponse,
 } from '../../src/http/schemas.ts';
-import type {
-  JobEnqueueInput,
-  JobEnqueueResult,
-  JobRecord,
-  JobStore,
-} from '../../src/jobs/store.ts';
+import type { EnqueueInput, JobPayload, JobRecord, JobStore } from '../../src/jobs/store.ts';
 
 // Minimal valid PNG: 8-byte signature + a couple bytes so `normalize`'s
 // base64 magic-byte sniff agrees with the declared mime.
@@ -46,43 +41,62 @@ function silentLogger(): ErrorMiddlewareLogger {
   return { warn: vi.fn(), error: vi.fn() };
 }
 
-interface RecordingStore extends JobStore {
-  enqueued: JobEnqueueInput[];
+interface RecordingStore {
+  enqueued: EnqueueInput[];
   getCalls: string[];
+  enqueue: JobStore['enqueue'];
+  get: JobStore['get'];
 }
 
-/** Build a JobStore double that records every `enqueue`/`get` call. */
+/** Build a structural JobStore double that records every `enqueue`/`get` call.
+ *  The route only uses `enqueue` + `get` so we implement just those two. */
 function makeStore(opts?: {
-  enqueue?: (input: JobEnqueueInput) => Promise<JobEnqueueResult>;
+  enqueue?: (input: EnqueueInput) => Promise<JobRecord>;
   get?: (id: string) => Promise<JobRecord | null>;
 }): RecordingStore {
-  const enqueued: JobEnqueueInput[] = [];
+  const enqueued: EnqueueInput[] = [];
   const getCalls: string[] = [];
+  const now = '2026-04-23T00:00:00.000Z';
   const enqueueImpl =
     opts?.enqueue ??
-    (async (): Promise<JobEnqueueResult> => ({
-      jobId: 'job-00000000-0000-4000-8000-000000000001',
+    (async (input: EnqueueInput): Promise<JobRecord> => ({
+      jobId: input.jobId ?? 'job-00000000-0000-4000-8000-000000000001',
       status: 'queued',
+      attempts: 0,
+      createdAt: now,
+      completedAt: null,
+      payload: input.payload,
+      result: null,
+      error: null,
     }));
   const getImpl = opts?.get ?? (async () => null);
   return {
     enqueued,
     getCalls,
-    async enqueue(input) {
+    async enqueue(input: EnqueueInput): Promise<JobRecord> {
       enqueued.push(input);
       return enqueueImpl(input);
     },
-    async get(id) {
+    async get(id: string): Promise<JobRecord | null> {
       getCalls.push(id);
       return getImpl(id);
     },
-  };
+  } as unknown as RecordingStore;
 }
 
 describe('POST /v1/jobs (R17)', () => {
   it('202 — validates, normalizes, enqueues, returns {jobId, status:"queued"}', async () => {
     const store = makeStore({
-      enqueue: async () => ({ jobId: 'job-happy-1', status: 'queued' }),
+      enqueue: async (input) => ({
+        jobId: 'job-happy-1',
+        status: 'queued',
+        attempts: 0,
+        createdAt: '2026-04-23T00:00:00.000Z',
+        completedAt: null,
+        payload: input.payload,
+        result: null,
+        error: null,
+      }),
     });
     const app = buildApp({ jobStore: store, logger: silentLogger() });
 
@@ -106,24 +120,32 @@ describe('POST /v1/jobs (R17)', () => {
     const body = (await res.json()) as JobsEnqueueResponse;
     expect(body).toEqual({ jobId: 'job-happy-1', status: 'queued' });
 
-    // enqueue() saw the normalized image + task-specific fields + options.
-    // This is the R17 acceptance surrogate for "retina:queue length +1":
-    // exactly one enqueue call per POST. The real LPUSH lives in R14's
-    // JobStore class and is covered by its own spec.
+    // enqueue() saw the normalized image + task-specific fields + options
+    // wrapped in the canonical `{ payload }` envelope. This is the R17
+    // acceptance surrogate for "retina:queue length +1": exactly one
+    // enqueue call per POST. The real LPUSH lives in R14's JobStore class
+    // and is covered by its own spec.
     expect(store.enqueued).toHaveLength(1);
     const input = store.enqueued[0];
     if (!input) throw new Error('expected one enqueue call');
-    expect(input.task).toBe('describe');
-    expect(input.image.mime).toBe('image/png');
-    expect(Buffer.from(input.image.bytes).equals(PNG_BYTES)).toBe(true);
-    expect(input.prompt).toBe('describe me');
-    expect(input.maxTokens).toBe(64);
-    expect(input.provider).toBe('openai');
-    expect(input.callbackUrl).toBe('https://example.com/cb');
+    const payload = input.payload as JobPayload & {
+      image: { bytes: Uint8Array; mime: string };
+      prompt?: string;
+      maxTokens?: number;
+      provider?: string;
+      callbackUrl?: string;
+    };
+    expect(payload.task).toBe('describe');
+    expect(payload.image.mime).toBe('image/png');
+    expect(Buffer.from(payload.image.bytes).equals(PNG_BYTES)).toBe(true);
+    expect(payload.prompt).toBe('describe me');
+    expect(payload.maxTokens).toBe(64);
+    expect(payload.provider).toBe('openai');
+    expect(payload.callbackUrl).toBe('https://example.com/cb');
     // Non-set task-specific fields stay absent — no undefined → null drift.
-    expect('languages' in input).toBe(false);
-    expect('schema' in input).toBe(false);
-    expect('templateId' in input).toBe(false);
+    expect('languages' in payload).toBe(false);
+    expect('schema' in payload).toBe(false);
+    expect('templateId' in payload).toBe(false);
   });
 
   it('202 — ocr task forwards languages only (no describe/extract fields)', async () => {
@@ -143,12 +165,13 @@ describe('POST /v1/jobs (R17)', () => {
     expect(res.status).toBe(202);
     const input = store.enqueued[0];
     if (!input) throw new Error('expected one enqueue call');
-    expect(input.task).toBe('ocr');
-    expect(input.languages).toEqual(['en', 'de']);
-    expect('prompt' in input).toBe(false);
-    expect('maxTokens' in input).toBe(false);
-    expect('schema' in input).toBe(false);
-    expect('templateId' in input).toBe(false);
+    const payload = input.payload as JobPayload & { languages?: string[] };
+    expect(payload.task).toBe('ocr');
+    expect(payload.languages).toEqual(['en', 'de']);
+    expect('prompt' in payload).toBe(false);
+    expect('maxTokens' in payload).toBe(false);
+    expect('schema' in payload).toBe(false);
+    expect('templateId' in payload).toBe(false);
   });
 
   it('202 — extract task forwards templateId OR schema (XOR)', async () => {
@@ -168,9 +191,10 @@ describe('POST /v1/jobs (R17)', () => {
     expect(res.status).toBe(202);
     const input = store.enqueued[0];
     if (!input) throw new Error('expected one enqueue call');
-    expect(input.task).toBe('extract');
-    expect(input.templateId).toBe('invoice-v1');
-    expect('schema' in input).toBe(false);
+    const payload = input.payload as JobPayload & { templateId?: string; schema?: unknown };
+    expect(payload.task).toBe('extract');
+    expect(payload.templateId).toBe('invoice-v1');
+    expect('schema' in payload).toBe(false);
   });
 
   // ---------------------------------------------------------------------------
@@ -270,6 +294,8 @@ describe('GET /v1/jobs/:id (R17)', () => {
     usage: { inputTokens: 10, outputTokens: 2 },
   };
 
+  const sampleDescribePayload: JobPayload = { task: 'describe' };
+
   it('200 — queued state returns record with nulls for result / completedAt / error', async () => {
     const record: JobRecord = {
       jobId: 'job-q-1',
@@ -277,6 +303,7 @@ describe('GET /v1/jobs/:id (R17)', () => {
       attempts: 0,
       createdAt: '2026-04-23T00:00:00.000Z',
       completedAt: null,
+      payload: sampleDescribePayload,
       result: null,
       error: null,
     };
@@ -287,7 +314,17 @@ describe('GET /v1/jobs/:id (R17)', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type') ?? '').toMatch(/application\/json/);
     const body = (await res.json()) as JobRecordResponse;
-    expect(body).toEqual(record);
+    // JobRecordResponse (wire shape) omits `payload`; compare the public
+    // projection rather than the full store record.
+    expect(body).toEqual({
+      jobId: record.jobId,
+      status: record.status,
+      attempts: record.attempts,
+      createdAt: record.createdAt,
+      completedAt: record.completedAt,
+      result: record.result,
+      error: record.error,
+    });
     expect(store.getCalls).toEqual(['job-q-1']);
   });
 
@@ -298,6 +335,7 @@ describe('GET /v1/jobs/:id (R17)', () => {
       attempts: 1,
       createdAt: '2026-04-23T00:00:00.000Z',
       completedAt: null,
+      payload: sampleDescribePayload,
       result: null,
       error: null,
     };
@@ -319,6 +357,7 @@ describe('GET /v1/jobs/:id (R17)', () => {
       attempts: 1,
       createdAt: '2026-04-23T00:00:00.000Z',
       completedAt: '2026-04-23T00:00:05.000Z',
+      payload: sampleDescribePayload,
       result: sampleResult,
       error: null,
     };
@@ -341,6 +380,7 @@ describe('GET /v1/jobs/:id (R17)', () => {
       attempts: 3,
       createdAt: '2026-04-23T00:00:00.000Z',
       completedAt: '2026-04-23T00:00:10.000Z',
+      payload: sampleDescribePayload,
       result: null,
       error: { code: 'provider_failed', message: 'all providers failed' },
     };
