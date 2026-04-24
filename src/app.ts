@@ -22,6 +22,9 @@
  *   - src/http/routes/analyze.ts         (POST /v1/analyze — unified task
  *                                          endpoint; mounted only when
  *                                          `deps.router` is supplied)
+ *   - src/http/routes/jobs.ts            (POST /v1/jobs, GET /v1/jobs/:id —
+ *                                          mounted only when `deps.jobStore`
+ *                                          is supplied; R17)
  */
 
 import { Hono } from 'hono';
@@ -34,7 +37,9 @@ import { createAnalyzeRoute } from './http/routes/analyze';
 import { createDescribeRoute } from './http/routes/describe';
 import { createExtractRoute } from './http/routes/extract';
 import { createHealthRoute, type RedisStatusProbe } from './http/routes/health';
+import { createJobsRoute } from './http/routes/jobs';
 import { createOcrRoute } from './http/routes/ocr';
+import type { JobStore } from './jobs/store';
 import { buildLogger, type Logger } from './logger';
 
 /** Default body cap (10 MiB) until R03 wires `config.MAX_IMAGE_BYTES`. */
@@ -70,7 +75,9 @@ export interface BuildAppDeps {
    *  so test harnesses that never exercise those paths don't need one. When
    *  supplied alongside `router`, `/v1/extract` is also mounted. */
   templates?: TemplateRegistry;
-  jobStore?: unknown;
+  /** R14 `JobStore`. When supplied `buildApp()` mounts `/v1/jobs`
+   *  (POST + GET /:id, R17). SSE stream route is added in R18. */
+  jobStore?: JobStore;
   /** ioredis client used by `GET /healthz` to report `redis: up|down`
    *  from the connection `status`. R13 wires the real ioredis instance;
    *  omission leaves the health route reporting `redis: "down"`. */
@@ -148,6 +155,9 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
         ...(deps.templates !== undefined ? { templates: deps.templates } : {}),
       }),
     );
+  }
+  if (deps.jobStore !== undefined) {
+    app.route('/', createJobsRoute({ store: deps.jobStore, maxBytes }));
   }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
