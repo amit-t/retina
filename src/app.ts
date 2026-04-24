@@ -16,14 +16,23 @@
  *                                          only when `deps.router` is supplied)
  *   - src/http/routes/ocr.ts             (POST /v1/ocr — mounted only when
  *                                          `deps.router` is supplied)
+ *   - src/http/routes/extract.ts         (POST /v1/extract — mounted only when
+ *                                          both `deps.router` AND
+ *                                          `deps.templates` are supplied)
+ *   - src/http/routes/analyze.ts         (POST /v1/analyze — unified task
+ *                                          endpoint; mounted only when
+ *                                          `deps.router` is supplied)
  */
 
 import { Hono } from 'hono';
 import type { TaskRouter } from './core/tasks/describe';
+import type { TemplateRegistry } from './core/tasks/extract';
 import { createErrorHandler, type ErrorMiddlewareLogger } from './http/middleware/error';
 import { type RequestIdVariables, requestId } from './http/middleware/request-id';
 import { sizeLimit } from './http/middleware/size-limit';
+import { createAnalyzeRoute } from './http/routes/analyze';
 import { createDescribeRoute } from './http/routes/describe';
+import { createExtractRoute } from './http/routes/extract';
 import { createHealthRoute } from './http/routes/health';
 import { createOcrRoute } from './http/routes/ocr';
 import { buildLogger, type Logger } from './logger';
@@ -48,10 +57,14 @@ export interface BuildAppDeps {
   config?: { MAX_IMAGE_BYTES?: number; REQUEST_TIMEOUT_MS?: number };
   logger?: Logger | ErrorMiddlewareLogger;
   /** R06c `ProviderRouter` (or any structural `TaskRouter`). When omitted the
-   *  routes that need a router (e.g. `/v1/describe`, `/v1/ocr`) are not
-   *  mounted, keeping /healthz-only test harnesses self-contained. */
+   *  routes that need a router (e.g. `/v1/describe`, `/v1/ocr`, `/v1/analyze`)
+   *  are not mounted, keeping /healthz-only test harnesses self-contained. */
   router?: TaskRouter;
-  templates?: unknown;
+  /** R10 `TemplateRegistry`. Only the dedicated `/v1/extract` route (R11)
+   *  and the `extract` branch of `/v1/analyze` (R12b) read it; optional here
+   *  so test harnesses that never exercise those paths don't need one. When
+   *  supplied alongside `router`, `/v1/extract` is also mounted. */
+  templates?: TemplateRegistry;
   jobStore?: unknown;
 }
 
@@ -102,6 +115,24 @@ export function buildApp(deps: BuildAppDeps = {}): Hono<AppEnv> {
       }),
     );
     app.route('/', createOcrRoute({ router: deps.router, maxBytes }));
+    if (deps.templates !== undefined) {
+      app.route(
+        '/',
+        createExtractRoute({
+          router: deps.router,
+          templates: deps.templates,
+          config: { MAX_IMAGE_BYTES: maxBytes, REQUEST_TIMEOUT_MS: requestTimeoutMs },
+        }),
+      );
+    }
+    app.route(
+      '/',
+      createAnalyzeRoute({
+        router: deps.router,
+        config: { MAX_IMAGE_BYTES: maxBytes, REQUEST_TIMEOUT_MS: requestTimeoutMs },
+        ...(deps.templates !== undefined ? { templates: deps.templates } : {}),
+      }),
+    );
   }
 
   // 4. error — terminal catch that converts thrown errors to JSON envelopes.
